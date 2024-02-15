@@ -1,0 +1,28 @@
+{
+  "name": "magic-web-utils",
+  "version": "0.1.0",
+  "description": "Game dev utils in TS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlveLarsson/magic-web.git"
+  },
+  "keywords": [
+    "game",
+    "game-dev",
+    "input",
+    "utils"
+  ],
+  "author": "Alve Larsson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlveLarsson/magic-web/issues"
+  },
+  "homepage": "https://github.com/AlveLarsson/magic-web#readme",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
