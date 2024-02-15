@@ -1,5 +1,6 @@
 import * as Matrix from './math/matrix';
 import * as Utils from './utils';
+import * as Input from './io/input';
 
 export var canvas: HTMLCanvasElement;
 export var context: GPUCanvasContext;
@@ -11,7 +12,7 @@ export var depthTexture: GPUTexture;
 export var sampler: GPUSampler;
 
 export var aspect: number;
-export var projectionMatrix: Matrix.Matrix4;
+export var projectionMatrix: Matrix.Matrix;
 
 export function refreshRenderPass(device) {
 
@@ -77,6 +78,8 @@ export async function init(updateCallback: (delta: number) => void, renderCallba
 
     refreshRenderPass(device);
 
+    Input.setup();
+
     var startTime = performance.now();
     var oldTime = 0.0;
     var elapsedTime = 0.0;
@@ -105,6 +108,9 @@ export async function init(updateCallback: (delta: number) => void, renderCallba
         deltaTime = Utils.clamp(deltaTime, 0.000, 0.3);
         oldTime = newTime;
         elapsedTime += deltaTime;
+
+        Utils.update(deltaTime);
+        Input.update();
 
         // Callback to consumer
         updateCallback(deltaTime);
