@@ -1,9 +1,12 @@
 var gamepads = navigator.getGamepads();
 
 // TODO: cover more input types
+// TODO: explore changeing the map to a Float32Array and generate a key moduel
 export var map = {
     mouseX: 0.0,
     mouseY: 0.0,
+    mouseXDiff: 0.0,
+    mouseYDiff: 0.0,
     forward: 0.0,
     backward: 0.0,
     left: 0.0,
@@ -20,6 +23,8 @@ export var map = {
 function keyReset() {
     map.mouseX = 0.0
     map.mouseY = 0.0
+    map.mouseXDiff = 0.0
+    map.mouseYDiff = 0.0
     map.forward = 0.0
     map.backward = 0.0
     map.left = 0.0
@@ -82,10 +87,6 @@ function keyup(e) {
 }
 
 export function update() {
-    map.primary = false
-    map.secondary = false
-    map.primaryUp = false
-    map.secondaryUp = false
 
     for (let i = 0; i < gamepads.length; i++) {
         const gamepad = gamepads[i];
@@ -125,6 +126,15 @@ export function update() {
             map.left = 0.0
         }
     }
+}
+
+export function lateUpdate() {
+    map.primary = false
+    map.secondary = false
+    map.primaryUp = false
+    map.secondaryUp = false
+    map.mouseXDiff = 0.0
+    map.mouseYDiff = 0.0
 }
 
 export function vibrate(strength = 1, duration = 100) {
@@ -167,9 +177,37 @@ export function setup() {
         keyup(e)
     })
 
+    var lastMouseX: number = 0
+    var lastMouseY: number = 0
     window.addEventListener('mousemove', (e) => {
         map.mouseX = e.movementX
         map.mouseY = e.movementY
+
+        map.mouseXDiff = map.mouseX - lastMouseX
+        map.mouseYDiff = map.mouseY - lastMouseY
+
+        lastMouseX = e.movementX
+        lastMouseY = e.movementY
+    })
+
+    window.addEventListener('touchstart', (e) => {
+    })
+
+    window.addEventListener('touchend', (e) => {
+        keyReset()
+    })
+
+    var lastTouchX: number = 0
+    var lastTouchY: number = 0
+    window.addEventListener('touchmove', (e) => {
+        map.mouseX = e.touches[0].clientX
+        map.mouseY = e.touches[0].clientY
+
+        map.mouseXDiff = map.mouseX - lastTouchX
+        map.mouseYDiff = map.mouseY - lastTouchY
+
+        lastTouchX = map.mouseX
+        lastTouchY = map.mouseY
     })
 
     window.addEventListener('mousedown', (e) => {

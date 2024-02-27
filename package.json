@@ -1,8 +1,8 @@
 {
-  "name": "magic-web-utils",
-  "version": "0.1.0",
-  "description": "Game dev utils in TS",
-  "main": "index.js",
+  "name": "magic-framework",
+  "version": "0.1.2",
+  "description": "Game dev framework",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,8 @@
     "input",
     "utils"
   ],
+  "bin": "cli.js",
+  "type": "module",
   "author": "Alve Larsson",
   "license": "MIT",
   "bugs": {

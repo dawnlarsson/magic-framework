@@ -1,6 +1,6 @@
-import * as Matrix from './math/matrix';
-import * as Utils from './utils';
-import * as Input from './io/input';
+import * as Matrix from '../math/matrix';
+import * as Utils from '../utils';
+import * as Input from '../io/input';
 
 export var canvas: HTMLCanvasElement;
 export var context: GPUCanvasContext;

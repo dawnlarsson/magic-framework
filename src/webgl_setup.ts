@@ -9,6 +9,10 @@ export var gl: WebGL2RenderingContext;
 export var aspect: number;
 export var projectionMatrix: Matrix.Matrix;
 
+export function refreshSizes() {
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+
 export async function init(updateCallback: (delta: number) => void, renderCallback: () => void) {
     canvas = document.getElementById('c') as HTMLCanvasElement;
     gl = canvas.getContext('webgl2') as WebGL2RenderingContext;
@@ -18,6 +22,15 @@ export async function init(updateCallback: (delta: number) => void, renderCallba
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
     Input.setup();
+
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.frontFace(gl.CCW);
+    gl.cullFace(gl.BACK);
+
+    refreshSizes();
 
     var startTime = performance.now();
     var oldTime = 0.0;
