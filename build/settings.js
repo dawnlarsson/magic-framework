@@ -4,6 +4,8 @@ import process from "process";
 
 import * as build from "./build.js";
 
+export var verboselog = true;
+
 export const color = { red: "\x1b[91m", green: "\x1b[92m", yellow: "\x1b[93m", blue: "\x1b[94m", magenta: "\x1b[95m", cyan: "\x1b[96m", reset: "\x1b[0m", white: "\x1b[97m" };
 export const colors = [color.red, color.green, color.yellow, color.blue, color.magenta, color.cyan];
 
@@ -209,7 +211,8 @@ function todo() {
 }
 
 export function print(message, colour) {
-    console.log(colour + message + color.reset + "\n");
+    if (!verboselog) return;
+    console.log(colour + message + color.reset);
 }
 
 export function sucess(message) {

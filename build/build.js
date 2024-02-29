@@ -26,48 +26,72 @@ const assetTypes = [
 const assetEmojiType = ["🧩", "🎨", "🔊"];
 
 export async function build() {
-    await assetBundle();
+    assetBundle();
 }
 
 export async function assetBundle() {
     settings.print("\n🛠  Building asset bundle...", settings.color.white);
     console.time("asset bundle");
 
-    var content = header;
+    let content = header;
+    let blobContents = [];
+    let offset = 0;
+    let assetCount = [];
 
-    let blobContent = Buffer.alloc(0);
-
-    var offset = 0;
-    var type = 0;
     for (let assetType of assetTypes) {
-        const path = "" + process.cwd() + "\\" + settings.config.assets + "\\" + assetType;
-        settings.print(`\n📦   Building  |  ` + settings.color.cyan + path, settings.color.white);
+        var assetsCount = 0;
+        const dirPath = path.join(process.cwd(), settings.config.assets, assetType);
+        settings.print(`\n📦   Building  |  ` + settings.color.cyan + dirPath, settings.color.white);
 
-        const files = fs.readdirSync(path);
-        for (let file of files) {
-            const asset = path + "\\" + file;
-            const fileExtension = file.slice(file.lastIndexOf(".") + 1);
-            console.log(fileExtension + "  " + asset);
+        try {
+            const files = fs.readdirSync(dirPath);
+            for (let file of files) {
+                const filePath = path.join(dirPath, file);
+                const fileExtension = path.extname(file).slice(1);
+                const assetBuffer = fs.readFileSync(filePath);
+                const type = getType(fileExtension);
+                console.log(fileExtension + "  " + filePath);
 
-            const assetBuffer = fs.readFileSync(asset);
-            const type = getType(fileExtension);
+                content += `    "${path.basename(file, path.extname(file))}": { offset: ${offset}, size: ${assetBuffer.length}, type: "${type}", blob: "" },\n`;
+                blobContents.push(assetBuffer);
 
-            content += `    "${file.split('.')[0]}": { offset: ${offset}, size: ${assetBuffer.length}, type: "${type}", blob: "" },\n`;
-            blobContent = Buffer.concat([blobContent, assetBuffer]);
-
-            offset += assetBuffer.length;
+                offset += assetBuffer.length;
+                assetsCount += 1;
+            }
+        } catch (error) {
+            settings.error(`processing ${dirPath}: \n` + error);
+            // Handle error or continue to next directory
         }
 
-        type += 1;
-
+        assetCount.push(assetsCount);
     }
 
-    content += "};\n" + loader;
+    console.log("");
+    const finalBlob = Buffer.concat(blobContents);
+    const assetPath = path.join(settings.config.src, 'assets.js');
+    fs.writeFileSync(assetPath, content + "};\n" + loader);
+    settings.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, settings.color.white);
 
-    fs.writeFileSync(settings.config.dist + "/assets.bin", blobContent);
+    const binaryPath = path.join(settings.config.dist, 'assets.bin');
 
-    fs.writeFileSync(settings.config.src + "/assets.js", content);
-    console.log("\n");
+    // round to 2 decimal places
+    const filesize_mb = finalBlob.length / 1024 / 1024;
+    const filesize_rounded = Math.round(filesize_mb * 100) / 100;
+
+    settings.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", settings.color.white);
+    fs.writeFileSync(binaryPath, finalBlob);
+
+    let totalAssets = 0;
+    for (let i = 0; i < assetCount.length; i++) {
+        totalAssets += assetCount[i];
+    }
+
+    let assetReport = "";
+    for (let i = 0; i < assetCount.length; i++) {
+        assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + assetTypes[i];
+    }
+
+    settings.print("\nAssets:  " + totalAssets + "\n" + assetReport + "\n", settings.color.white);
 
     console.timeEnd("asset bundle");
 }
