@@ -1,10 +1,11 @@
 {
   "name": "magic-framework",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "Game dev framework",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prep": "bun build\\publish.js",
+    "magic": "bun cli.js"
   },
   "repository": {
     "type": "git",

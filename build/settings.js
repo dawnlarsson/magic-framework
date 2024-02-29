@@ -3,8 +3,9 @@ import * as build from "./build.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
+import { version as ver } from "./version.js";
 
-export var verboselog = true;
+var verboselog = true;
 
 export const color = { red: "\x1b[91m", green: "\x1b[92m", yellow: "\x1b[93m", blue: "\x1b[94m", magenta: "\x1b[95m", cyan: "\x1b[96m", reset: "\x1b[0m", white: "\x1b[97m" };
 export const colors = [color.red, color.green, color.yellow, color.blue, color.magenta, color.cyan];
@@ -19,7 +20,7 @@ export const commands = [
     { "name": "new", "description": "Create a new project at the path", "type": "command", "default": false, "function": project },
     { "name": "dev", "description": "Start development mode", "type": "command", "default": false, "function": watch },
     { "name": "build", "description": "Build the project", "type": "command", "default": false, "function": build.build },
-    { "name": "version", "description": "Show the version number and exit", "type": "command", "default": false, "function": todo },
+    { "name": "version", "description": "Show the version number and exit", "type": "command", "default": false, "function": version },
     { "name": "setup", "description": "Setup a config file in the current directory", "type": "command", "default": false, "function": setup },
 ];
 
@@ -215,6 +216,10 @@ export async function load() {
 
 function todo() {
     print("TODO - not implemented yet ", color.red);
+}
+
+export function version() {
+    console.log(ver);
 }
 
 export function print(message, colour) {
