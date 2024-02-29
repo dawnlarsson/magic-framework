@@ -81,7 +81,7 @@ export function parse(args) {
         var options = args.slice(1);
         command.function(options);
     } else {
-        console.log(color.red + `Command not found: ${args[0]}` + color.reset);
+        error("Command not found: " + args[0]);
         help();
     }
 }
@@ -99,20 +99,21 @@ export function help() {
 export function dumpConfig() {
     var content = "";
 
-    for (let setting of config) {
-        content += `${setting.name} ${setting.default}\n`;
+    for (const [key, value] of Object.entries(config)) {
+        content += key + " " + value + "\n";
     }
 
     return content;
 }
 
 export function setup() {
-    var config = dumpConfig();
+    const config = dumpConfig();
 
-    // Create new file
-    fs.writeFileSync("magic.config", config + "\n").catch((err) => {
-        warn("Error writing the file: " + err);
-    });
+    fs.writeFileSync("magic.config", config);
+
+    sucess("Config file created at " + process.cwd());
+    print("\nwith default options:", color.yellow);
+    console.log(config);
 }
 
 export function project(path) {
@@ -211,6 +212,14 @@ export function print(message, colour) {
     console.log(colour + message + color.reset + "\n");
 }
 
+export function sucess(message) {
+    console.log(color.green + "✅   " + message + color.reset);
+}
+
 export function warn(message) {
     console.log(color.yellow + "⚠️    " + message + color.reset);
+}
+
+export function error(message) {
+    console.log(color.red + "🛑   Error: " + color.reset + message);
 }

@@ -41,13 +41,13 @@ export async function assetBundle() {
     var type = 0;
     for (let assetType of assetTypes) {
         const path = "" + process.cwd() + "\\" + settings.config.assets + "\\" + assetType;
-        settings.print(`\n📦   Building  | ` + path, settings.color.white);
+        settings.print(`\n📦   Building  |  ` + settings.color.cyan + path, settings.color.white);
 
         const files = fs.readdirSync(path);
         for (let file of files) {
             const asset = path + "\\" + file;
             const fileExtension = file.slice(file.lastIndexOf(".") + 1);
-            console.log("     " + fileExtension + "  " + asset);
+            console.log(fileExtension + "  " + asset);
 
             const assetBuffer = fs.readFileSync(asset);
             const type = getType(fileExtension);
