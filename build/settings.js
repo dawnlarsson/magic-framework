@@ -1,8 +1,8 @@
+
+import * as build from "./build.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
-
-import * as build from "./build.js";
 
 export var verboselog = true;
 
@@ -30,11 +30,30 @@ const newProject = [
     { "name": config.systems, "type": "dir" },
 ];
 
+
+export async function parse(args) {
+    if (args.length === 0) {
+        help();
+        return;
+    }
+
+    let command = commands.find(c => c.name === args[0]);
+    if (command) {
+        var options = args.slice(1);
+
+        await command.function(options)
+
+    } else {
+        error("Command not found: " + args[0]);
+        help();
+    }
+}
+
+// TODO: move to watch.js
 var watchers = [];
 var watchInterval;
-
-function watch() {
-    print("█  Starting development mode 🔥✨", color.white);
+async function watch() {
+    print("🔄   Starting development mode 🔥✨", color.white);
 
     for (let watcher of watchers) {
         watcher.close();
@@ -68,24 +87,12 @@ function watch() {
         watch();
     }));
 
-    // Keep the process running
-    watchInterval = setInterval(() => { }, 1000);
-}
+    console.log("");
+    console.log("🔥  Watching for changes...");
 
-export function parse(args) {
-    if (args.length === 0) {
-        help();
-        return;
-    }
-
-    let command = commands.find(c => c.name === args[0]);
-    if (command) {
-        var options = args.slice(1);
-        command.function(options);
-    } else {
-        error("Command not found: " + args[0]);
-        help();
-    }
+    watchInterval = await new Promise(() => {
+        setInterval(() => { }, 1000);
+    });
 }
 
 export function help() {

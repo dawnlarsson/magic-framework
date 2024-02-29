@@ -26,7 +26,7 @@ const assetTypes = [
 const assetEmojiType = ["🧩", "🎨", "🔊"];
 
 export async function build() {
-    assetBundle();
+    await assetBundle();
 }
 
 export async function assetBundle() {
@@ -44,6 +44,7 @@ export async function assetBundle() {
         settings.print(`\n📦   Building  |  ` + settings.color.cyan + dirPath, settings.color.white);
 
         try {
+            // Using readdirSync here
             const files = fs.readdirSync(dirPath);
             for (let file of files) {
                 const filePath = path.join(dirPath, file);

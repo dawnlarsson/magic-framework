@@ -11,10 +11,10 @@ async function main() {
     settings.warn("Magic is in a early work in progress state, expect bugs & todos!");
     console.log("");
 
-    await settings.load();
+    settings.load();
 
     const args = process.argv.slice(2);
-    settings.parse(args);
+    await settings.parse(args);
 
     console.log(settings.color.green);
     console.timeEnd("⌛️   Magic total runtime");
