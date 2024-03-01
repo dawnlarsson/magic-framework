@@ -11,20 +11,20 @@ export var config = { dist: "public", src: "src", assets: "assets", systems: "sy
 export var configData = [config.dist, config.src, config.assets, config.systems];
 
 export const commands = [
-    { "name": "dist", "description": "The directory to output the build files to", "type": "config", "default": "./public", "function": null },
-    { "name": "help", "description": "Show this help message", "type": "command", "default": false, "function": help },
-    { "name": "new", "description": "Create a new project at the path", "type": "command", "default": false, "function": project },
-    { "name": "dev", "description": "Start development mode", "type": "command", "default": false, "function": watch.watch },
-    { "name": "build", "description": "Build the project", "type": "command", "default": false, "function": build.build },
-    { "name": "version", "description": "Show the version number and exit", "type": "command", "default": false, "function": version },
-    { "name": "setup", "description": "Setup a config file in the current directory", "type": "command", "default": false, "function": setup },
+    { type: "act", name: "help", description: "Show this help message", function: help },
+    { type: "act", name: "new", description: "Create a new project at the path", function: project },
+    { type: "act", name: "dev", description: "Start development mode", function: watch.watch },
+    { type: "act", name: "build", description: "Build the project", function: build.build },
+    { type: "act", name: "version", description: "Show the version number and exit", function: version },
+    { type: "act", name: "setup", description: "Setup a config file in the current directory", function: setup },
+    // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
 ];
 
 const newProject = [
-    { "name": "magic.config", "type": "file", "content": dumpConfig },
-    { "name": config.dist, "type": "dir" },
-    { "name": config.assets, "type": "dir" },
-    { "name": config.systems, "type": "dir" },
+    { type: "file", name: "magic.config", content: dumpConfig },
+    { type: "dir", name: config.dist },
+    { type: "dir", name: config.assets },
+    { type: "dir", name: config.systems },
 ];
 
 export async function parse(args) {
@@ -33,16 +33,27 @@ export async function parse(args) {
         return;
     }
 
-    let command = commands.find(c => c.name === args[0]);
-    if (command) {
-        var options = args.slice(1);
+    var action = null;
 
-        await command.function(options)
+    for (let arg of args) {
+        for (let command of commands) {
+            if (command.name !== arg) continue;
 
-    } else {
-        log.error("Command not found: " + args[0]);
-        help();
+            if (command.type === "act") {
+                action = command.function;
+                continue;
+            }
+
+            if (command.type === "mod") {
+                command.function();
+                continue;
+            }
+        }
     }
+
+    if (!action) return;
+
+    action(args);
 }
 
 export function help() {
