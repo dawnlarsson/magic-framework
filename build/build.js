@@ -31,7 +31,7 @@ export async function build() {
 }
 
 export async function assetBundle() {
-    log.print("\n🛠  Building asset bundle...");
+    log.write("\n🛠  Building asset bundle...");
     console.time("asset bundle");
 
     let content = header;
@@ -42,7 +42,7 @@ export async function assetBundle() {
     for (let assetType of assetTypes) {
         var assetsCount = 0;
         const dirPath = path.join(process.cwd(), settings.config.assets, assetType);
-        log.print(`\n📦   Building  |  ` + log.cyan + dirPath);
+        log.print("\n\n📦   Building  |  " + log.cyan + dirPath);
 
         try {
             // Using readdirSync here
@@ -52,7 +52,7 @@ export async function assetBundle() {
                 const fileExtension = path.extname(file).slice(1);
                 const assetBuffer = fs.readFileSync(filePath);
                 const type = getType(fileExtension);
-                console.log(fileExtension + "  " + filePath);
+                log.write("\n" + fileExtension + "  " + filePath);
 
                 content += `    "${path.basename(file, path.extname(file))}": { offset: ${offset}, size: ${assetBuffer.length}, type: "${type}", blob: "" },\n`;
                 blobContents.push(assetBuffer);
@@ -68,12 +68,12 @@ export async function assetBundle() {
         assetCount.push(assetsCount);
     }
 
-    console.log("");
+    log.write("\n\n");
 
     const finalBlob = Buffer.concat(blobContents);
     const assetPath = path.join(settings.config.src, 'assets.js');
     fs.writeFileSync(assetPath, content + "};\n" + loader);
-    log.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, log.green);
+    log.write("📦  ⟹   Exported offsets  ⟹   " + assetPath + "\n");
 
     const binaryPath = path.join(settings.config.dist, 'assets.bin');
 
@@ -81,9 +81,8 @@ export async function assetBundle() {
     const filesize_mb = finalBlob.length / 1024 / 1024;
     const filesize_rounded = Math.round(filesize_mb * 100) / 100;
 
-    log.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", log.green);
+    log.write("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb" + "\n");
     fs.writeFileSync(binaryPath, finalBlob);
-
 
     let totalAssets = 0;
     for (let i = 0; i < assetCount.length; i++) {
@@ -95,7 +94,7 @@ export async function assetBundle() {
         assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + assetTypes[i];
     }
 
-    log.print("\nTotal assets: " + totalAssets + "\n" + assetReport + "\n", log.reset);
+    log.write("\nTotal assets: " + totalAssets + "\n" + assetReport + "\n");
 
     console.timeEnd("asset bundle");
 }

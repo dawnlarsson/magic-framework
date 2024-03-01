@@ -87,7 +87,6 @@ export function setup() {
 
     log.success("Config file created at " + process.cwd());
     log.print("\nwith default options:", log.yellow);
-    console.log(config);
 }
 
 export function project(path) {

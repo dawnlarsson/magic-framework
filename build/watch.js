@@ -2,6 +2,7 @@ import * as settings from "./settings.js";
 import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
+import * as build from "./build.js";
 import process from "process";
 
 var watchers = [];
