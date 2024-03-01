@@ -1,4 +1,5 @@
 import * as settings from "./settings.js";
+import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
 import process from "process";
@@ -30,7 +31,7 @@ export async function build() {
 }
 
 export async function assetBundle() {
-    settings.print("\n🛠  Building asset bundle...", settings.color.white);
+    log.print("\n🛠  Building asset bundle...");
     console.time("asset bundle");
 
     let content = header;
@@ -41,7 +42,7 @@ export async function assetBundle() {
     for (let assetType of assetTypes) {
         var assetsCount = 0;
         const dirPath = path.join(process.cwd(), settings.config.assets, assetType);
-        settings.print(`\n📦   Building  |  ` + settings.color.cyan + dirPath, settings.color.white);
+        log.print(`\n📦   Building  |  ` + log.cyan + dirPath);
 
         try {
             // Using readdirSync here
@@ -60,7 +61,7 @@ export async function assetBundle() {
                 assetsCount += 1;
             }
         } catch (error) {
-            settings.error(`processing ${dirPath}: \n` + error);
+            log.error(`processing ${dirPath}: \n` + error);
             // Handle error or continue to next directory
         }
 
@@ -72,7 +73,7 @@ export async function assetBundle() {
     const finalBlob = Buffer.concat(blobContents);
     const assetPath = path.join(settings.config.src, 'assets.js');
     fs.writeFileSync(assetPath, content + "};\n" + loader);
-    settings.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, settings.color.green);
+    log.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, log.green);
 
     const binaryPath = path.join(settings.config.dist, 'assets.bin');
 
@@ -80,7 +81,7 @@ export async function assetBundle() {
     const filesize_mb = finalBlob.length / 1024 / 1024;
     const filesize_rounded = Math.round(filesize_mb * 100) / 100;
 
-    settings.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", settings.color.green);
+    log.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", log.green);
     fs.writeFileSync(binaryPath, finalBlob);
 
 
@@ -94,7 +95,7 @@ export async function assetBundle() {
         assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + assetTypes[i];
     }
 
-    settings.print(settings.color.reset + "\nTotal assets: " + totalAssets + "\n" + assetReport + "\n", settings.color.white);
+    log.print("\nTotal assets: " + totalAssets + "\n" + assetReport + "\n", log.reset);
 
     console.timeEnd("asset bundle");
 }

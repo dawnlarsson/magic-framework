@@ -1,4 +1,5 @@
 import * as magic from "./settings.js";
+import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
 import process from "process";
@@ -17,7 +18,7 @@ const registryVersion = registryJson["dist-tags"].latest;
 
 var publishType = "patch"
 
-magic.print("Prepping to publish a " + publishType + " version!", magic.color.magenta);
+log.print("Prepping to publish a " + publishType + " version!", log.magenta);
 
 if (process.argv.length > 2) {
     publishType = process.argv[2];
@@ -29,7 +30,7 @@ var newRegistryVersion = registryVersion.split(".");
 
 // if this local version is greater than the registry version then just skip incrementing the version
 if (newVersion[0] > newRegistryVersion[0] || newVersion[1] > newRegistryVersion[1] || newVersion[2] > newRegistryVersion[2]) {
-    magic.error("Local version is greater than the registry version");
+    log.error("Local version is greater than the registry version");
     process.exit(0);
 }
 
@@ -50,7 +51,7 @@ if (publishType === "patch") {
 
 newVersion = newVersion.join(".");
 
-magic.print("\ncurrent version: " + version + magic.color.green + "  ----> [ " + newVersion + " ] ", magic.color.magenta);
+log.print("\ncurrent version: " + version + log.green + "  ----> [ " + newVersion + " ] ", log.magenta);
 
 // Update the package.json
 config.version = newVersion;
