@@ -68,10 +68,11 @@ export async function assetBundle() {
     }
 
     console.log("");
+
     const finalBlob = Buffer.concat(blobContents);
     const assetPath = path.join(settings.config.src, 'assets.js');
     fs.writeFileSync(assetPath, content + "};\n" + loader);
-    settings.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, settings.color.white);
+    settings.print("📦  ⟹   Exported offsets  ⟹   " + assetPath, settings.color.green);
 
     const binaryPath = path.join(settings.config.dist, 'assets.bin');
 
@@ -79,8 +80,9 @@ export async function assetBundle() {
     const filesize_mb = finalBlob.length / 1024 / 1024;
     const filesize_rounded = Math.round(filesize_mb * 100) / 100;
 
-    settings.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", settings.color.white);
+    settings.print("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb", settings.color.green);
     fs.writeFileSync(binaryPath, finalBlob);
+
 
     let totalAssets = 0;
     for (let i = 0; i < assetCount.length; i++) {
@@ -92,7 +94,7 @@ export async function assetBundle() {
         assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + assetTypes[i];
     }
 
-    settings.print("\nAssets:  " + totalAssets + "\n" + assetReport + "\n", settings.color.white);
+    settings.print(settings.color.reset + "\nTotal assets: " + totalAssets + "\n" + assetReport + "\n", settings.color.white);
 
     console.timeEnd("asset bundle");
 }

@@ -66,8 +66,9 @@ async function watch() {
 
     if (fs.existsSync(config.assets)) {
         watchers.push(fs.watch(config.assets, { recursive: true }, (eventType, filename) => {
-            print(" 🔥  Asset changed:..." + filename, color.yellow);
+            print("🔥  Asset changed: " + filename, color.yellow);
             build.build();
+            console.log("🔥  Watching for changes...");
         }));
     } else {
         warn("No Assets directory found...");
@@ -75,17 +76,19 @@ async function watch() {
 
     if (fs.existsSync(config.systems)) {
         watchers.push(fs.watch(config.systems, { recursive: true }, (eventType, filename) => {
-            print(" 🔥  System changed:..." + filename, color.yellow);
+            print("🔥  System changed: " + filename, color.yellow);
             build.build();
+            console.log("🔥  Watching for changes...");
         }));
     } else {
         warn("No Systems directory found...");
     }
 
     watchers.push(fs.watch("magic.config", (eventType, filename) => {
-        console.log(" 🔥  " + color.green + `config changed ✨ Restarting... \n\n` + color.reset);
+        console.log("🔄  " + color.green + `config changed ✨ Restarting... \n\n` + color.reset);
         load();
         watch();
+        console.log("🔥  Watching for changes...");
     }));
 
     console.log("");
@@ -109,8 +112,11 @@ export function help() {
 export function dumpConfig() {
     var content = "";
 
+    const len = Object.keys(config).length;
+    var i = 0;
     for (const [key, value] of Object.entries(config)) {
-        content += key + " " + value + "\n";
+        content += key + " " + value + (i < len - 1 ? "\n" : "");
+        i += 1;
     }
 
     return content;
@@ -139,13 +145,15 @@ export function project(path) {
     // Check if the directory exists or is empty
     if (fs.existsSync(path)) {
         if (fs.readdirSync(path).length > 0) {
-            console.log(color.red + "🛑  The directory is not empty");
-            console.log(color.reset);
-            process.exit(0);
+            error("The directory is not empty");
+        } else {
+            error("The directory already exists");
         }
 
-        console.log("The directory already exists");
+        process.exit(0);
     }
+
+    fs.mkdirSync(path[0], { recursive: true });
 
     // Create the project
     for (let item of newProject) {
