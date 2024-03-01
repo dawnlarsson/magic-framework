@@ -21,14 +21,8 @@ async function main() {
 }
 
 main()
-    .then(() => end(0))
+    .then(() => console.timeEnd(log.timer))
     .catch((e) => {
-        log.error(e);
-        end(1);
+        console.timeEnd(log.timer);
+        process.exit(c);
     });
-
-function end(c) {
-    log.flush();
-    console.timeEnd(log.timer);
-    process.exit(c);
-}

@@ -1,3 +1,5 @@
+import process from "process";
+
 var verbose = true;
 export var buffer = "";
 
@@ -32,3 +34,5 @@ export function flush() {
     console.log(buffer);
     buffer = "";
 }
+
+process.on('exit', flush);
