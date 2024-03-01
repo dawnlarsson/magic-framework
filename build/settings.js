@@ -28,16 +28,15 @@ const newProject = [
 ];
 
 export async function parse(args) {
-    if (args.length === 0) {
-        help();
-        return;
-    }
-
     var action = null;
 
     for (let arg of args) {
         for (let command of commands) {
+
             if (command.name !== arg) continue;
+
+            // Remove the argument from the list
+            args = args.filter((item) => item !== arg);
 
             if (command.type === "act") {
                 action = command.function;
@@ -51,19 +50,21 @@ export async function parse(args) {
         }
     }
 
-    if (!action) return;
+    if (!action) return null;
 
-    action(args);
+    return action(args);
 }
 
 export function help() {
-    log.print("\nUsage: magic [command] [options]");
-    log.print("Magic commands:");
+    var buffer = "Usage: magic [command] [options]\nMagic commands:\n";
+
     var i = 0;
     for (let command of commands) {
-        console.log(log.colors[i % log.colors.length] + ` ${command.name}  --` + log.reset + `  ${command.description}`);
+        buffer += log.colors[i % log.colors.length] + ` ${command.name}  --` + log.reset + `  ${command.description}\n`;
         i += 1;
     }
+
+    log.write(buffer);
 }
 
 export function dumpConfig() {
@@ -90,10 +91,12 @@ export function setup() {
 }
 
 export function project(path) {
+
     if (path.length === 0) {
         log.error("No path provided! usage: magic new <path>");
         return;
     }
+
 
     if (fs.existsSync(path[0])) {
         if (fs.readdirSync(path[0]).length > 0) {
@@ -102,7 +105,7 @@ export function project(path) {
             log.error("The directory already exists");
         }
 
-        process.exit(0);
+        return;
     }
 
     log.print("Creating a new project at " + path[0], log.green);
@@ -126,8 +129,8 @@ export function project(path) {
 var userInput = false;
 async function promptNewProject() {
     log.warn("No magic.config file found in this directory...");
-    console.log(log.cyan);
-    console.log("✨   Would you like to create a new project here? (y/n) \n" + log.magenta + "     > " + process.cwd() + log.reset);
+    log.print("✨   Would you like to create a new project here? (y/n)" + log.magenta + "     > " + process.cwd(), log.cyan);
+    log.flush();
 
     process.stdin.on('data', function (data) {
         data = data.toString().trim();
