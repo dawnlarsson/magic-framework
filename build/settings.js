@@ -138,13 +138,8 @@ export function project(path) {
         return;
     }
 
-    console.log(color.cyan);
-    console.log("Making a new project at " + path);
-    console.log(color.reset);
-
-    // Check if the directory exists or is empty
-    if (fs.existsSync(path)) {
-        if (fs.readdirSync(path).length > 0) {
+    if (fs.existsSync(path[0])) {
+        if (fs.readdirSync(path[0]).length > 0) {
             error("The directory is not empty");
         } else {
             error("The directory already exists");
@@ -153,9 +148,10 @@ export function project(path) {
         process.exit(0);
     }
 
+    print("Creating a new project at " + path[0], color.green);
+
     fs.mkdirSync(path[0], { recursive: true });
 
-    // Create the project
     for (let item of newProject) {
 
         if (item.type === "file") {
