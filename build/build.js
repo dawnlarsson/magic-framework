@@ -33,7 +33,7 @@ export async function assetBundle() {
     let offset = 0;
     let assetCount = [];
 
-    for (let assetType of settings.assetTypes) {
+    for (let assetType of settings.ASSET_TYPES) {
         var assetsCount = 0;
         const dirPath = path.join(process.cwd(), settings.config.assets, assetType);
         log.print("\n\n📦   Building  |  " + log.cyan + dirPath);
@@ -85,7 +85,7 @@ export async function assetBundle() {
 
     let assetReport = "";
     for (let i = 0; i < assetCount.length; i++) {
-        assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + settings.assetTypes[i];
+        assetReport += "\n" + assetEmojiType[i] + "  " + assetCount[i] + "  " + settings.ASSET_TYPES[i];
     }
 
     log.write("\nTotal assets: " + totalAssets + "\n" + assetReport + "\n");

@@ -44,7 +44,7 @@ export async function watch(path) {
         log.warn("No Systems directory found...");
     }
 
-    watchers.push(fs.watch(path + "magic.config", (eventType, filename) => {
+    watchers.push(fs.watch(path + settings.CONFIG_PATH, (eventType, filename) => {
         log.print("🔄  " + log.green + "config changed ✨ Restarting... \n");
         settings.load();
         watch();

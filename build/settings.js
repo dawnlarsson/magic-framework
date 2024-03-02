@@ -15,13 +15,15 @@ export var config = {
     systems: "systems"
 };
 
-export const assetTypes = [
+export var CONFIG_PATH = "magic.config";
+
+export const ASSET_TYPES = [
     'mesh',
     'textures',
     'sound',
 ];
 
-export const commands = [
+export const COMMANDS = [
     { type: "act", name: "help", description: "Show this help message", function: help },
     { type: "act", name: "new", description: "Create a new project at the path", function: project },
     { type: "act", name: "dev", description: "Start development mode", function: watch.watch },
@@ -32,20 +34,20 @@ export const commands = [
     // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
 ];
 
-const newProject = [
+const PROJECT_STRUCTURE = [
     { type: "dir", name: config.dist },
     { type: "dir", name: config.assets },
     { type: "dir", name: config.systems },
     ...genAssetSubDirs(),
     { type: "dir", name: ".magic" },
-    { type: "file", name: "magic.config", content: () => dumpConfig(config) },
-    { type: "file", name: ".gitignore", content: () => { return ".magic/" } },
-    { type: "file", name: user.CONFIG_PATH, content: () => dumpConfig(user.config) },
+    { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },
+    { type: "file", name: ".gitignore", content: ".magic/" },
+    { type: "file", name: user.CONFIG_PATH, content: dumpConfig(user.config) },
 ];
 
 function genAssetSubDirs() {
     var content = []
-    for (let type of assetTypes) {
+    for (let type of ASSET_TYPES) {
         content.push({ type: "dir", name: `${config.assets}/${type}` })
     };
 
@@ -58,7 +60,7 @@ export async function parse(args) {
     if (args.length === 0) help();
 
     for (let arg of args) {
-        for (let command of commands) {
+        for (let command of COMMANDS) {
 
             if (command.name !== arg) continue;
 
@@ -86,7 +88,7 @@ export function help() {
     var buffer = "Usage: magic [command] [options]\nMagic commands:\n";
 
     var i = 0;
-    for (let command of commands) {
+    for (let command of COMMANDS) {
         buffer += `${log.colors[i % log.colors.length]}${command.name} ${log.reset}  ${command.description}\n`;
         i += 1;
     }
@@ -110,7 +112,7 @@ export function dumpConfig(data) {
 export function setup() {
     const config = dumpConfig(config);
 
-    fs.writeFileSync("magic.config", config);
+    fs.writeFileSync(CONFIG_PATH, config);
 
     log.success("Config file created at " + process.cwd());
     log.print("\nwith default options:", log.yellow);
@@ -138,10 +140,10 @@ export function project(path) {
 
     fs.mkdirSync(path[0], { recursive: true });
 
-    for (let item of newProject) {
+    for (let item of PROJECT_STRUCTURE) {
 
         if (item.type === "file") {
-            fs.writeFileSync(path + "/" + item.name, item.content());
+            fs.writeFileSync(path + "/" + item.name, item.content);
         }
 
         if (item.type === "dir") {
@@ -176,7 +178,7 @@ async function promptNewProject() {
 
 // Loads the config at the root of the project
 export async function load() {
-    const filePath = path.join(process.cwd(), "magic.config");
+    const filePath = path.join(process.cwd(), CONFIG_PATH);
     config = loadConfig(filePath);
 }
 
