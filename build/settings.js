@@ -61,13 +61,15 @@ function genAssetSubDirs() {
     return content;
 }
 
-export async function parse(args) {
+export function parse(args) {
     var action = null;
 
     if (args.length === 0) return null;
 
     var i = 0;
     var skipNext = false;
+    var validProjectExpected = false;
+
     for (let arg of args) {
         if (skipNext) {
             skipNext = false;
@@ -84,6 +86,7 @@ export async function parse(args) {
             if (command.type === "act") {
 
                 if (command.takesPath) {
+                    validProjectExpected = true;
                     if (i + 1 <= args.length) {
                         projectPath = args[i];
                         skipNext = true;
@@ -108,7 +111,7 @@ export async function parse(args) {
 }
 
 // Loads the config at the root of the project
-export async function load() {
+export function load() {
     const filePath = path.join(projectPath, CONFIG_PATH);
 
     if (!fs.existsSync(filePath)) {
@@ -187,7 +190,7 @@ export function project(path) {
     }
 }
 
-async function promptNewProject() {
+function promptNewProject() {
     log.warn("No magic.config file found in this directory...");
     log.print("✨   Would you like to create a new project here? (y/n)" + log.MAGENTA + "     > " + projectPath, log.CYAN);
     log.flush();
@@ -206,11 +209,11 @@ async function promptNewProject() {
     });
 
     while (!userInput) {
-        await new Promise(resolve => setTimeout(resolve, 300));
+        setTimeout(resolve, 300);
     }
 }
 
-export async function loadConfig(p) {
+export function loadConfig(p) {
     let data;
     try {
         data = fs.readFileSync(p, 'utf8');

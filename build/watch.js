@@ -8,7 +8,7 @@ import process from "process";
 var watchers = [];
 var watchInterval;
 
-export async function watch(path) {
+export function watch() {
     log.print("🔄   Starting development mode 🔥✨");
 
     for (let watcher of watchers) {
@@ -19,11 +19,10 @@ export async function watch(path) {
         clearInterval(watchInterval);
     }
 
-    if (!path) path = "";
-    if (path.length > 0 && path[path.length - 1] !== "/") path += "/";
+    const assetsDir = path.join(settings.projectPath, settings.config.assets);
 
-    if (fs.existsSync(path + settings.config.assets)) {
-        watchers.push(fs.watch(path + settings.config.assets, { recursive: true }, (eventType, filename) => {
+    if (fs.existsSync(assetsDir)) {
+        watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
             build.build();
             log.print("🔥  Watching for changes...");
@@ -33,8 +32,10 @@ export async function watch(path) {
         log.warn("No Assets directory found...");
     }
 
-    if (fs.existsSync(path + settings.config.systems)) {
-        watchers.push(fs.watch(path + settings.config.systems, { recursive: true }, (eventType, filename) => {
+    const systemsDir = path.join(settings.projectPath, settings.config.systems);
+
+    if (fs.existsSync(systemsDir)) {
+        watchers.push(fs.watch(systemsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  System changed: " + filename, log.YELLOW);
             build.build();
             log.print("🔥  Watching for changes...");
@@ -44,7 +45,9 @@ export async function watch(path) {
         log.warn("No Systems directory found...");
     }
 
-    watchers.push(fs.watch(path + settings.CONFIG_PATH, (eventType, filename) => {
+    const config = path.join(settings.projectPath, settings.CONFIG_PATH);
+
+    watchers.push(fs.watch(config, (eventType, filename) => {
         log.print("🔄  " + log.GREEN + "config changed ✨ Restarting... \n");
         settings.load();
         watch();
@@ -58,7 +61,7 @@ export async function watch(path) {
     console.timeEnd(log.TIMER_SIG);
     console.time(log.TIMER_SIG);
 
-    watchInterval = await new Promise(() => {
+    watchInterval = new Promise(() => {
         setInterval(() => { }, 1000);
     });
 }
