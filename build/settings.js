@@ -68,7 +68,6 @@ export function parse(args) {
 
     var i = 0;
     var skipNext = false;
-    var validProjectExpected = false;
 
     for (let arg of args) {
         if (skipNext) {
@@ -86,7 +85,6 @@ export function parse(args) {
             if (command.type === "act") {
 
                 if (command.takesPath) {
-                    validProjectExpected = true;
                     if (i + 1 <= args.length) {
                         projectPath = args[i];
                         skipNext = true;

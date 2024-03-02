@@ -9,7 +9,6 @@ var watchers = [];
 var watchInterval;
 
 export function watch() {
-    log.print("🔄   Starting development mode 🔥✨");
 
     for (let watcher of watchers) {
         watcher.close();
@@ -18,6 +17,23 @@ export function watch() {
     if (watchInterval) {
         clearInterval(watchInterval);
     }
+
+    const config = path.join(settings.projectPath, settings.CONFIG_PATH);
+
+    if (!fs.existsSync(config)) {
+        log.error("No magic.config file found");
+        process.exit(1);
+    }
+
+    log.print("🔄   Starting development mode 🔥✨");
+
+    watchers.push(fs.watch(config, (eventType, filename) => {
+        log.print("🔄  " + log.GREEN + "config changed ✨ Restarting... \n");
+        settings.load();
+        watch();
+        log.print("🔥  Watching for changes...");
+        log.flush();
+    }));
 
     const assetsDir = path.join(settings.projectPath, settings.config.assets);
 
@@ -45,15 +61,6 @@ export function watch() {
         log.warn("No Systems directory found...");
     }
 
-    const config = path.join(settings.projectPath, settings.CONFIG_PATH);
-
-    watchers.push(fs.watch(config, (eventType, filename) => {
-        log.print("🔄  " + log.GREEN + "config changed ✨ Restarting... \n");
-        settings.load();
-        watch();
-        log.print("🔥  Watching for changes...");
-        log.flush();
-    }));
 
     log.print("\n🔥  Watching for changes...");
     log.flush();
