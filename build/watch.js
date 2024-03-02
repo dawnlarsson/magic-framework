@@ -24,7 +24,7 @@ export async function watch(path) {
 
     if (fs.existsSync(path + settings.config.assets)) {
         watchers.push(fs.watch(path + settings.config.assets, { recursive: true }, (eventType, filename) => {
-            log.print("🔥  Asset changed: " + filename, log.yellow);
+            log.print("🔥  Asset changed: " + filename, log.YELLOW);
             build.build();
             log.print("🔥  Watching for changes...");
             log.flush();
@@ -35,7 +35,7 @@ export async function watch(path) {
 
     if (fs.existsSync(path + settings.config.systems)) {
         watchers.push(fs.watch(path + settings.config.systems, { recursive: true }, (eventType, filename) => {
-            log.print("🔥  System changed: " + filename, log.yellow);
+            log.print("🔥  System changed: " + filename, log.YELLOW);
             build.build();
             log.print("🔥  Watching for changes...");
             log.flush();
@@ -45,7 +45,7 @@ export async function watch(path) {
     }
 
     watchers.push(fs.watch(path + settings.CONFIG_PATH, (eventType, filename) => {
-        log.print("🔄  " + log.green + "config changed ✨ Restarting... \n");
+        log.print("🔄  " + log.GREEN + "config changed ✨ Restarting... \n");
         settings.load();
         watch();
         log.print("🔥  Watching for changes...");
@@ -55,8 +55,8 @@ export async function watch(path) {
     log.print("\n🔥  Watching for changes...");
     log.flush();
 
-    console.timeEnd(log.timer);
-    console.time(log.timer);
+    console.timeEnd(log.TIMER_SIG);
+    console.time(log.TIMER_SIG);
 
     watchInterval = await new Promise(() => {
         setInterval(() => { }, 1000);

@@ -4,32 +4,26 @@ import * as fs from "fs";
 import * as path from "path";
 import process from "process";
 
-const cwd = process.cwd();
-const configPath = path.join(cwd, "package.json");
-const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+const CONFIG_PATH = path.join(process.cwd(), "package.json");
+const CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
 
-const version = config.version;
-
-const registry = await fetch("https://registry.npmjs.org/magic-framework");
-
-const registryJson = await registry.json();
-
-const registryVersion = registryJson["dist-tags"].latest;
+const REGISTRY_URL = await fetch("https://registry.npmjs.org/magic-framework");
+const REGISTRY_JSON = await REGISTRY_URL.json();
 
 var publishType = "patch"
 
-log.print("Prepping to publish a " + publishType + " version!", log.magenta);
+log.print("Prepping to publish a " + publishType + " version!", log.MAGENTA);
 
 if (process.argv.length > 2) {
     publishType = process.argv[2];
 }
 
 // Create the new version
-var newVersion = version.split(".");
-var newRegistryVersion = registryVersion.split(".");
+var newVersion = CONFIG.version.split(".");
+const REGISTRY_VERSION = REGISTRY_JSON["dist-tags"].latest.split(".");
 
 // if this local version is greater than the registry version then just skip incrementing the version
-if (newVersion[0] > newRegistryVersion[0] || newVersion[1] > newRegistryVersion[1] || newVersion[2] > newRegistryVersion[2]) {
+if (newVersion[0] > REGISTRY_VERSION[0] || newVersion[1] > REGISTRY_VERSION[1] || newVersion[2] > REGISTRY_VERSION[2]) {
     log.error("Local version is greater than the registry version");
     process.exit(0);
 }
@@ -51,11 +45,11 @@ if (publishType === "patch") {
 
 newVersion = newVersion.join(".");
 
-log.print("\ncurrent version: " + version + log.green + "  ----> [ " + newVersion + " ] ", log.magenta);
+log.print("\ncurrent version: " + CONFIG.version + log.GREEN + "  ----> [ " + newVersion + " ] ", log.MAGENTA);
 
 // Update the package.json
-config.version = newVersion;
+CONFIG.version = newVersion;
 
-fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG, null, 2));
 
-fs.writeFileSync(path.join(cwd, "build", "version.js"), "export const version = \"" + newVersion + "\";");
+fs.writeFileSync(path.join(cwd, "build", "version.js"), "export const VERSION = \"" + newVersion + "\";");

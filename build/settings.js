@@ -89,7 +89,7 @@ export function help() {
 
     var i = 0;
     for (let command of COMMANDS) {
-        buffer += `${log.colors[i % log.colors.length]}${command.name} ${log.reset}  ${command.description}\n`;
+        buffer += `${log.COLORS[i % log.COLORS.length]}${command.name} ${log.RESET}  ${command.description}\n`;
         i += 1;
     }
 
@@ -115,7 +115,7 @@ export function setup() {
     fs.writeFileSync(CONFIG_PATH, config);
 
     log.success("Config file created at " + process.cwd());
-    log.print("\nwith default options:", log.yellow);
+    log.print("\nwith default options:", log.YELLOW);
 }
 
 export function project(path) {
@@ -136,7 +136,7 @@ export function project(path) {
         return;
     }
 
-    log.print("Creating a new project at " + path[0], log.green);
+    log.print("Creating a new project at " + path[0], log.GREEN);
 
     fs.mkdirSync(path[0], { recursive: true });
 
@@ -154,11 +154,12 @@ export function project(path) {
     }
 }
 
-var userInput = false;
 async function promptNewProject() {
     log.warn("No magic.config file found in this directory...");
-    log.print("✨   Would you like to create a new project here? (y/n)" + log.magenta + "     > " + process.cwd(), log.cyan);
+    log.print("✨   Would you like to create a new project here? (y/n)" + log.MAGENTA + "     > " + process.cwd(), log.CYAN);
     log.flush();
+
+    var userInput = false;
 
     process.stdin.on('data', function (data) {
         data = data.toString().trim();
