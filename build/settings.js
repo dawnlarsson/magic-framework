@@ -15,7 +15,8 @@ export var config = {
     systems: "systems"
 };
 
-export var CONFIG_PATH = "magic.config";
+export var projectPath = "";
+export const CONFIG_PATH = "magic.config";
 
 export const ASSET_TYPES = [
     'mesh',
@@ -24,12 +25,18 @@ export const ASSET_TYPES = [
 ];
 
 export const COMMANDS = [
+    // Info
     { type: "act", name: "help", description: "Show this help message", function: help },
-    { type: "act", name: "new", description: "Create a new project at the path", function: project },
-    { type: "act", name: "dev", description: "Start development mode", function: watch.watch },
-    { type: "act", name: "build", description: "Build the project", function: build.build },
     { type: "act", name: "version", description: "Show the version number and exit", function: version },
-    { type: "act", name: "setup", description: "Setup a config file in the current directory", function: setup },
+
+    // Project actions
+    // takes path expects the next argument
+    { type: "act", name: "new", takesPath: true, description: "Create a new project at the path", function: project },
+    { type: "act", name: "dev", takesPath: true, description: "Start development mode", function: watch.watch },
+    { type: "act", name: "build", takesPath: true, description: "Build the project", function: build.build },
+    { type: "act", name: "setup", takesPath: true, description: "Setup a config file in the current directory", function: setup },
+
+    // User config
     { type: "act", name: "verbose", description: "Toggle verbose logging", function: () => { user.set(user.config.verbose_log, !user.config.verbose_log) } },
     // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
 ];
@@ -57,9 +64,16 @@ function genAssetSubDirs() {
 export async function parse(args) {
     var action = null;
 
-    if (args.length === 0) help();
+    if (args.length === 0) return null;
 
+    var i = 0;
+    var skipNext = false;
     for (let arg of args) {
+        if (skipNext) {
+            skipNext = false;
+            continue;
+        }
+
         for (let command of COMMANDS) {
 
             if (command.name !== arg) continue;
@@ -68,6 +82,14 @@ export async function parse(args) {
             args = args.filter((item) => item !== arg);
 
             if (command.type === "act") {
+
+                if (command.takesPath) {
+                    if (i + 1 <= args.length) {
+                        projectPath = args[i];
+                        skipNext = true;
+                    }
+                }
+
                 action = command.function;
                 continue;
             }
@@ -77,12 +99,25 @@ export async function parse(args) {
                 continue;
             }
         }
+        i++;
     }
 
     if (!action) return null;
 
     return () => { action(args) };
 }
+
+// Loads the config at the root of the project
+export async function load() {
+    const filePath = path.join(projectPath, CONFIG_PATH);
+
+    if (!fs.existsSync(filePath)) {
+        return;
+    }
+
+    config = loadConfig(filePath);
+}
+
 
 export function help() {
     var buffer = "Usage: magic [command] [options]\nMagic commands:\n";
@@ -93,7 +128,7 @@ export function help() {
         i += 1;
     }
 
-    log.write(buffer);
+    log.write(buffer + "\n");
 }
 
 export function dumpConfig(data) {
@@ -110,21 +145,19 @@ export function dumpConfig(data) {
 }
 
 export function setup() {
-    const config = dumpConfig(config);
+    const buffer = dumpConfig(config);
 
-    fs.writeFileSync(CONFIG_PATH, config);
+    fs.writeFileSync(CONFIG_PATH, buffer);
 
-    log.success("Config file created at " + process.cwd());
+    log.success("Config file created at " + projectPath);
     log.print("\nwith default options:", log.YELLOW);
 }
 
 export function project(path) {
 
     if (path.length === 0) {
-        log.error("No path provided! usage: magic new <path>");
-        return;
+        path[0] = process.cwd();
     }
-
 
     if (fs.existsSync(path[0])) {
         if (fs.readdirSync(path[0]).length > 0) {
@@ -156,7 +189,7 @@ export function project(path) {
 
 async function promptNewProject() {
     log.warn("No magic.config file found in this directory...");
-    log.print("✨   Would you like to create a new project here? (y/n)" + log.MAGENTA + "     > " + process.cwd(), log.CYAN);
+    log.print("✨   Would you like to create a new project here? (y/n)" + log.MAGENTA + "     > " + projectPath, log.CYAN);
     log.flush();
 
     var userInput = false;
@@ -166,7 +199,7 @@ async function promptNewProject() {
 
         if (data === "y" || data === "yes" || data === "Y" || data === "Yes" || data === "tuta och kör") {
             process.stdin.end();
-            project(process.cwd());
+            project(projectPath);
         }
 
         userInput = true;
@@ -177,22 +210,12 @@ async function promptNewProject() {
     }
 }
 
-// Loads the config at the root of the project
-export async function load() {
-    const filePath = path.join(process.cwd(), CONFIG_PATH);
-    config = loadConfig(filePath);
-}
-
 export async function loadConfig(p) {
-    if (!fs.existsSync(p)) {
-        return;
-    }
-
     let data;
     try {
         data = fs.readFileSync(p, 'utf8');
     } catch (err) {
-        log.error("Error reading the file: " + err);
+        log.error("ON CONFIG LOAD: " + p + " 🛑  Error reading the file: " + err);
         return;
     }
 

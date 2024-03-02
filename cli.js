@@ -9,13 +9,17 @@ console.time(log.TIMER_SIG);
 process.on('exit', () => { console.timeEnd(log.TIMER_SIG) });
 
 async function main() {
+    user.load();
+
     log.write(log.MAGENTA + "✨   Magic Framework" + log.RESET + "\nMagic is in a early work in progress state, expect bugs & todos!\n\n");
 
-    user.load();
-    settings.load();
     const target = await settings.parse(process.argv.slice(2));
+    settings.load();
 
-    if (target == null) return;
+    if (target == null) {
+        settings.help();
+        return;
+    }
 
     target();
 }

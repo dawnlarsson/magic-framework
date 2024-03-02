@@ -18,6 +18,8 @@ export var config = {
 
 export function load() {
 
+    if (!fs.existsSync(CONFIG_PATH)) return;
+
     config = settings.loadConfig(CONFIG_PATH);
 
     if (config.blender_path === "?") {
