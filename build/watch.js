@@ -7,12 +7,15 @@ import process from "process";
 
 var watchers = [];
 var watchInterval;
+var active = false;
 
 export function watch() {
 
     for (let watcher of watchers) {
         watcher.close();
     }
+
+    watchers = [];
 
     if (watchInterval) {
         clearInterval(watchInterval);
@@ -25,14 +28,14 @@ export function watch() {
         process.exit(1);
     }
 
-    log.print("🔄   Starting development mode 🔥✨");
+    if (!active) log.print("🔄   Starting development mode");
+    active = true;
+    log.flush();
 
     watchers.push(fs.watch(config, (eventType, filename) => {
-        log.print("🔄  " + log.GREEN + "config changed ✨ Restarting... \n");
+        log.print("✨   Magic config changed...", log.MAGENTA);
         settings.load();
         watch();
-        log.print("🔥  Watching for changes...");
-        log.flush();
     }));
 
     const assetsDir = path.join(settings.projectPath, settings.config.assets);
@@ -41,7 +44,6 @@ export function watch() {
         watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
             build.build();
-            log.print("🔥  Watching for changes...");
             log.flush();
         }));
     } else {
@@ -54,7 +56,6 @@ export function watch() {
         watchers.push(fs.watch(systemsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  System changed: " + filename, log.YELLOW);
             build.build();
-            log.print("🔥  Watching for changes...");
             log.flush();
         }));
     } else {
@@ -62,13 +63,5 @@ export function watch() {
     }
 
 
-    log.print("\n🔥  Watching for changes...");
-    log.flush();
-
-    console.timeEnd(log.TIMER_SIG);
-    console.time(log.TIMER_SIG);
-
-    watchInterval = new Promise(() => {
-        setInterval(() => { }, 1000);
-    });
+    watchInterval = setInterval(() => { }, 1000);
 }
