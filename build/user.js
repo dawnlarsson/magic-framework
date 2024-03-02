@@ -18,16 +18,7 @@ export var config = {
 
 export function load() {
 
-    if (!fs.existsSync(CONFIG_PATH)) {
-        return;
-    }
-
-    fs.readFileSync(CONFIG_PATH, "utf8").split("\n").forEach((line) => {
-        let parts = line.split(" ");
-        let key = parts[0].trim();
-        let value = parts.slice(1).join(" ").trim();
-        config[key] = value;
-    });
+    config = settings.loadConfig(CONFIG_PATH);
 
     if (config.blender_path === "?") {
         blender.initialSetup();

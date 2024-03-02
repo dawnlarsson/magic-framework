@@ -176,21 +176,24 @@ async function promptNewProject() {
 
 // Loads the config at the root of the project
 export async function load() {
-
     const filePath = path.join(process.cwd(), "magic.config");
+    config = loadConfig(filePath);
+}
 
-    // Check if the file exists
-    if (!fs.existsSync(filePath)) {
-        return; // Assume default values
+export async function loadConfig(p) {
+    if (!fs.existsSync(p)) {
+        return;
     }
 
     let data;
     try {
-        data = fs.readFileSync(filePath, 'utf8');
+        data = fs.readFileSync(p, 'utf8');
     } catch (err) {
         log.error("Error reading the file: " + err);
         return;
     }
+
+    var output = {};
 
     const lines = data.split(/\r?\n/); // Handles both \n and \r\n
 
@@ -200,8 +203,10 @@ export async function load() {
 
         let value = parts.slice(1).join(" ").trim();
 
-        config[key] = value;
+        output[key] = value;
     }
+
+    return output;
 }
 
 
