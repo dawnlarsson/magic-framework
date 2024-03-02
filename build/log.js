@@ -1,6 +1,5 @@
 import process from "process";
 
-var verbose = true;
 export var buffer = "";
 
 export const
@@ -17,7 +16,6 @@ export const colors = [red, green, yellow, blue, magenta, cyan];
 export const timer = green + "⌛️   Magic total runtime" + reset;
 
 export function print(message, color) {
-    if (!verbose) return;
     if (!color) color = reset;
     buffer += color + message + reset + "\n";
 }
@@ -33,6 +31,11 @@ export function write(content) {
 export function flush() {
     console.log(buffer);
     buffer = "";
+}
+
+export function disableVerbose() {
+    buffer += "🔇   Verbose mode disabled\n";
+    print = () => { }
 }
 
 process.on('exit', flush);

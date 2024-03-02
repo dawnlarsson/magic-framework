@@ -1,6 +1,6 @@
 import * as build from "./build.js";
 import * as log from "./log.js";
-import * as blender from "./blender.js";
+import * as user from "./user.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
@@ -8,11 +8,12 @@ import { version as ver } from "./version.js";
 import * as watch from "./watch.js";
 
 // TODO: find a neater way instead 2 arrays for itterating over
-// ? = unknown
-// ! = error - Tried but failed
-// * = warning
-export var config = { dist: "public", src: "src", assets: "assets", systems: "systems" };
-export var configData = [config.dist, config.src, config.assets, config.systems, config.blender_path];
+export var config = {
+    dist: "public",
+    src: "src",
+    assets: "assets",
+    systems: "systems"
+};
 
 export const assetTypes = [
     'mesh',
@@ -26,8 +27,8 @@ export const commands = [
     { type: "act", name: "dev", description: "Start development mode", function: watch.watch },
     { type: "act", name: "build", description: "Build the project", function: build.build },
     { type: "act", name: "version", description: "Show the version number and exit", function: version },
-    { type: "act", name: "blender", description: "Check if blender is installed", function: blender.initialSetup },
     { type: "act", name: "setup", description: "Setup a config file in the current directory", function: setup },
+    { type: "act", name: "verbose", description: "Toggle verbose logging", function: () => { user.set(user.config.verbose_log, !user.config.verbose_log) } },
     // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
 ];
 
@@ -37,9 +38,9 @@ const newProject = [
     { type: "dir", name: config.systems },
     ...genAssetSubDirs(),
     { type: "dir", name: ".magic" },
-    { type: "file", name: "magic.config", content: dumpConfig },
+    { type: "file", name: "magic.config", content: () => dumpConfig(config) },
     { type: "file", name: ".gitignore", content: () => { return ".magic/" } },
-    { type: "file", name: ".magic/you.config", content: () => { return "blender_path ?" } },
+    { type: "file", name: user.CONFIG_PATH, content: () => dumpConfig(user.config) },
 ];
 
 function genAssetSubDirs() {
@@ -93,12 +94,12 @@ export function help() {
     log.write(buffer);
 }
 
-export function dumpConfig() {
+export function dumpConfig(data) {
     var content = "";
 
-    const len = Object.keys(config).length;
+    const len = Object.keys(data).length;
     var i = 0;
-    for (const [key, value] of Object.entries(config)) {
+    for (const [key, value] of Object.entries(data)) {
         content += key + " " + value + (i < len - 1 ? "\n" : "");
         i += 1;
     }
@@ -107,7 +108,7 @@ export function dumpConfig() {
 }
 
 export function setup() {
-    const config = dumpConfig();
+    const config = dumpConfig(config);
 
     fs.writeFileSync("magic.config", config);
 
