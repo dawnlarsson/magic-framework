@@ -1,5 +1,6 @@
 import * as build from "./build.js";
 import * as log from "./log.js";
+import * as blender from "./blender.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
@@ -7,8 +8,17 @@ import { version as ver } from "./version.js";
 import * as watch from "./watch.js";
 
 // TODO: find a neater way instead 2 arrays for itterating over
+// ? = unknown
+// ! = error - Tried but failed
+// * = warning
 export var config = { dist: "public", src: "src", assets: "assets", systems: "systems" };
-export var configData = [config.dist, config.src, config.assets, config.systems];
+export var configData = [config.dist, config.src, config.assets, config.systems, config.blender_path];
+
+export const assetTypes = [
+    'mesh',
+    'textures',
+    'sound',
+];
 
 export const commands = [
     { type: "act", name: "help", description: "Show this help message", function: help },
@@ -16,19 +26,35 @@ export const commands = [
     { type: "act", name: "dev", description: "Start development mode", function: watch.watch },
     { type: "act", name: "build", description: "Build the project", function: build.build },
     { type: "act", name: "version", description: "Show the version number and exit", function: version },
+    { type: "act", name: "blender", description: "Check if blender is installed", function: blender.initialSetup },
     { type: "act", name: "setup", description: "Setup a config file in the current directory", function: setup },
     // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
 ];
 
 const newProject = [
-    { type: "file", name: "magic.config", content: dumpConfig },
     { type: "dir", name: config.dist },
     { type: "dir", name: config.assets },
     { type: "dir", name: config.systems },
+    ...genAssetSubDirs(),
+    { type: "dir", name: ".magic" },
+    { type: "file", name: "magic.config", content: dumpConfig },
+    { type: "file", name: ".gitignore", content: () => { return ".magic/" } },
+    { type: "file", name: ".magic/you.config", content: () => { return "blender_path ?" } },
 ];
+
+function genAssetSubDirs() {
+    var content = []
+    for (let type of assetTypes) {
+        content.push({ type: "dir", name: `${config.assets}/${type}` })
+    };
+
+    return content;
+}
 
 export async function parse(args) {
     var action = null;
+
+    if (args.length === 0) help();
 
     for (let arg of args) {
         for (let command of commands) {
@@ -52,7 +78,7 @@ export async function parse(args) {
 
     if (!action) return null;
 
-    return action(args);
+    return () => { action(args) };
 }
 
 export function help() {
@@ -60,7 +86,7 @@ export function help() {
 
     var i = 0;
     for (let command of commands) {
-        buffer += log.colors[i % log.colors.length] + ` ${command.name}  --` + log.reset + `  ${command.description}\n`;
+        buffer += `${log.colors[i % log.colors.length]}${command.name} ${log.reset}  ${command.description}\n`;
         i += 1;
     }
 
@@ -177,9 +203,6 @@ export async function load() {
     }
 }
 
-function todo() {
-    log.print("TODO - not implemented yet ", log.red);
-}
 
 export function version() {
     log.print(ver);

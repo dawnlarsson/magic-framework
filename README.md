@@ -1,4 +1,6 @@
 # Magic Framework
+![npm version](https://img.shields.io/npm/v/magic-framework.svg)
+
 A collection of utils and implementations for web games,
 with the goal of making web games concerned about speed and bundle size easy.
 some parts are ported from my private Zig engine.

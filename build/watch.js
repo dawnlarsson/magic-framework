@@ -46,7 +46,7 @@ export async function watch(path) {
 
     watchers.push(fs.watch(path + "magic.config", (eventType, filename) => {
         log.print("🔄  " + log.green + "config changed ✨ Restarting... \n");
-        load();
+        settings.load();
         watch();
         log.print("🔥  Watching for changes...");
         log.flush();
