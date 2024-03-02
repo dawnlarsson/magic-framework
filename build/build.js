@@ -66,17 +66,18 @@ export async function bundle() {
     log.write("\n\n");
 
     const finalBlob = Buffer.concat(blobContents);
-    const assetPath = path.join(settings.config.src, 'assets.js');
+    const assetPath = path.join(settings.projectPath, settings.config.src, 'assets.js');
     fs.writeFileSync(assetPath, content + "};\n" + LOADER_IMPL);
     log.write("📦  ⟹   Exported offsets  ⟹   " + assetPath + "\n");
 
-    const binaryPath = path.join(settings.config.dist, 'assets.bin');
+    const binaryPath = path.join(settings.projectPath, settings.config.dist, "assets.bin");
 
     // round to 2 decimal places
     const filesize_mb = finalBlob.length / 1024 / 1024;
     const filesize_rounded = Math.round(filesize_mb * 100) / 100;
 
     log.write("📦  ⟹   Exported binary   ⟹   " + binaryPath + "  |  " + filesize_rounded + " mb  |  " + finalBlob.length + " kb" + "\n");
+
     fs.writeFileSync(binaryPath, finalBlob);
 
     let totalAssets = 0;

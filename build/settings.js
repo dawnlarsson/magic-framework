@@ -12,7 +12,7 @@ export var config = {
     dist: "public",
     src: "src",
     assets: "assets",
-    systems: "systems"
+    systems: "src/systems"
 };
 
 export var projectPath = "";
@@ -42,6 +42,7 @@ export const COMMANDS = [
 ];
 
 const PROJECT_STRUCTURE = [
+    { type: "dir", name: config.src },
     { type: "dir", name: config.dist },
     { type: "dir", name: config.assets },
     { type: "dir", name: config.systems },
