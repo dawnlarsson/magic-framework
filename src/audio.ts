@@ -2,10 +2,8 @@ const audioContext = new AudioContext()
 
 var buffers = []
 
-export async function load(id, url) {
+export async function load(id, arrayBuffer) {
 
-    const response = await fetch(url)
-    const arrayBuffer = await response.arrayBuffer()
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
 
     buffers[id] = audioBuffer
