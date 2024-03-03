@@ -5,24 +5,44 @@ import * as path from "path";
 import process from "process";
 
 const LOADER_IMPL = `
+export const audioContext = new AudioContext();
+
+window.magic_play = play;
+
+export function play(sound) {
+    var source = audioContext.createBufferSource();
+    source.buffer = asset[sound].audio;
+    source.connect(audioContext.destination);
+    source.start();
+}
+
 export async function loadAll() {
     const response = await fetch('/assets.bin');
     const arrayBuffer = await response.arrayBuffer();
     var URL = window.URL || window.webkitURL;
 
     for (let assetName in asset) {
+        const data = new Uint8Array(arrayBuffer, asset[assetName].offset, asset[assetName].size);
+        const attachedBuffer = new Uint8Array(data).buffer;
+
         if (asset[assetName].blob === "") {
-            const blob = new Blob([new Uint8Array(arrayBuffer, asset[assetName].offset, asset[assetName].size)], { type: asset[assetName].type });
+            const blob = new Blob([data], { type: asset[assetName].type });
             asset[assetName].blob = URL.createObjectURL(blob);
             continue;
         }
 
+        if (asset[assetName].audio === "") {
+            asset[assetName].audio = await audioContext.decodeAudioData(attachedBuffer);
+            continue;
+        }
+
         if (asset[assetName].data === "") {
-            asset[assetName].data = new Uint8Array(arrayBuffer, asset[assetName].offset, asset[assetName].size);
+            asset[assetName].data = data
+            continue;
         }
 
         if (asset[assetName].text === "") {
-            asset[assetName].text = new TextDecoder().decode(new Uint8Array(arrayBuffer, asset[assetName].offset, asset[assetName].size));
+            asset[assetName].text = new TextDecoder().decode(attachedBuffer);
         }
     }
 }`;
@@ -42,7 +62,7 @@ export function getType(fileExtension) {
         case "png":
             return ["image/png"];
         case "wav":
-            return ["audio/wav", "raw"];
+            return ["audio/wav", "audio"];
     }
 }
 
@@ -77,14 +97,14 @@ export async function bundle() {
 
                 content += `    "${path.basename(file, path.extname(file))}": { offset: ${offset}, size: ${assetBuffer.length}, type: "${type[0]}", `;
 
+                // TODO: cleanup this mess
                 if (type[1]) {
-
                     if (type[1] === "text") {
                         content += `text: "" },\n`;
                     }
 
-                    if (type[1] === "raw") {
-                        content += `data: "" },\n`;
+                    if (type[1] === "audio") {
+                        content += `audio: "" },\n`;
                     }
                 } else {
                     content += `blob: "" },\n`;

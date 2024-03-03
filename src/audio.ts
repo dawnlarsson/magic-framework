@@ -2,18 +2,12 @@ const audioContext = new AudioContext()
 
 var buffers = []
 
-export async function load(id, arrayBuffer) {
+export async function load(id, data) {
 
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+    const buffer = new Uint8Array(data).buffer;
+    const audioBuffer = await audioContext.decodeAudioData(buffer)
 
     buffers[id] = audioBuffer
 
     return buffers.length
-}
-
-export function play(type) {
-    const source = audioContext.createBufferSource()
-    source.buffer = buffers[type]
-    source.connect(audioContext.destination)
-    source.start()
 }
