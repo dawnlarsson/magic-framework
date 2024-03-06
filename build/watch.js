@@ -6,10 +6,13 @@ import * as build from "./build.js";
 import * as bundle from "./bundle.js";
 
 import process from "process";
+import WebSocket from "ws";
 
 var watchers = [];
 var watchInterval;
 var active = false;
+
+var ws;
 
 export function watch() {
 
@@ -32,8 +35,12 @@ export function watch() {
 
     if (!active) log.print("✨   Running development mode, watching for changes...", log.MAGENTA);
     active = true;
+
+    settings.triggerWatchMode();
+    watchServer();
     build.build();
     bundle.bundle();
+    reload();
     log.flush();
 
     watchers.push(fs.watch(config, (eventType, filename) => {
@@ -42,6 +49,18 @@ export function watch() {
         watch();
     }));
 
+    const srcDir = path.join(settings.projectPath, settings.config.src);
+
+    if (fs.existsSync(srcDir)) {
+        watchers.push(fs.watch(srcDir, { recursive: true }, (eventType, filename) => {
+            log.print("🔥  Source changed: " + filename, log.YELLOW);
+            build.build();
+            bundle.bundle();
+            reload();
+            log.flush();
+        }));
+    }
+
     const assetsDir = path.join(settings.projectPath, settings.config.assets);
 
     if (fs.existsSync(assetsDir)) {
@@ -49,6 +68,7 @@ export function watch() {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
             build.build();
             bundle.bundle();
+            reload();
             log.flush();
         }));
     } else {
@@ -62,6 +82,7 @@ export function watch() {
             log.print("🔥  System changed: " + filename, log.YELLOW);
             build.build();
             bundle.bundle();
+            reload();
             log.flush();
         }));
     } else {
@@ -69,6 +90,28 @@ export function watch() {
     }
 
     watchInterval = setInterval(() => { }, 1000);
+}
+
+function watchServer() {
+    if (ws) {
+        return;
+    }
+
+    ws = new WebSocket.Server({ port: 3000 });
+
+    ws.on("connection", (socket) => { });
+
+    return ws;
+}
+
+export function reload() {
+    if (ws) {
+        ws.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send("reload");
+            }
+        });
+    }
 }
 
 export const CLIENT_WATCHER = `

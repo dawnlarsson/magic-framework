@@ -11,6 +11,8 @@ import * as watch from "./watch.js";
 
 export var projectPath = "";
 export var development_mode = false;
+export var watchMode = false;
+
 export const CONFIG_PATH = "magic.config";
 export const MAGIC_DIR = ".magic";
 export const validCWD = isValidProject(".");
@@ -267,4 +269,8 @@ export function version() {
 
 export function devMode() {
     development_mode = true;
+}
+
+export function triggerWatchMode() {
+    watchMode = true;
 }

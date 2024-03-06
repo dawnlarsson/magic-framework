@@ -66,7 +66,7 @@ export function rootFileContent() {
             }
         }
     } else {
-        buffer += "// Development mode\nwindow.magic_dev = true;\n" + watch.CLIENT_WATCHER + "\n\n";
+        buffer += "// Development mode\nwindow.magic_dev = true;\n";
 
         modulePath = path.join(process.cwd(), "index.ts");
         modulePath = modulePath.replace(/\\/g, "\\\\");
@@ -75,9 +75,12 @@ export function rootFileContent() {
     // Add the Magic import to the path
     buffer += `import "${modulePath}";\n`;
 
+    if (settings.watchMode) {
+        buffer += watch.CLIENT_WATCHER + "\n";
+    }
+
     // Find index.js/ts and import it in the settings.config.src folder
     const index = path.join(process.cwd(), settings.projectPath, settings.config.src, settings.config.entry);
-    console.log(index);
 
     if (fs.existsSync(index)) {
         buffer += `\n// Consumer lib\nimport "${index}";\n`;
