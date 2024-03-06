@@ -67,10 +67,6 @@ export function getType(fileExtension) {
 }
 
 export async function build() {
-    await bundle();
-}
-
-export async function bundle() {
     log.write("\n🛠  Building asset bundle...");
     console.time("asset bundle");
 

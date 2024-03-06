@@ -15,6 +15,9 @@ Written in Typescript (mostly)
 <hr>
 
 ### Current roster
+- CLI & Project creation
+- Assets & Project hot-reloading
+- Project bundling
 - Data driven per instance state machine
 - Input (keyboard, mouse, mobile touch, controllers (Xbox))
 - Binary static asset bundler
@@ -22,13 +25,11 @@ Written in Typescript (mostly)
 - Audio (WIP)
 
 ### TODOs:
-- GYRO input support
 - Build step version if stateInstancer
 - Audio: volume, pitch
 - MOF: Magic 3D Object Format
 - Mesh and material builder
 - Use web workers to load/parse asset bundle
-- Support bun bun
 - Blender: Find local version
 - Blender: overwrite MOF exporter script
 - Blender: .blend hot-reload exporter
@@ -36,3 +37,5 @@ Written in Typescript (mostly)
 - Webgpu & WebGL stuff
 - Investigate: in-browser hot-reloading
 - Investigate: wasm module hot reload
+- Investigate: Image formats, custom wasm decoder? 
+- Investigate: Zig support (wasm)

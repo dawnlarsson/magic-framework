@@ -3,6 +3,8 @@ import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
 import * as build from "./build.js";
+import * as bundle from "./bundle.js";
+
 import process from "process";
 
 var watchers = [];
@@ -28,8 +30,10 @@ export function watch() {
         process.exit(1);
     }
 
-    if (!active) log.print("🔄   Starting development mode");
+    if (!active) log.print("✨   Running development mode, watching for changes...", log.MAGENTA);
     active = true;
+    build.build();
+    bundle.bundle();
     log.flush();
 
     watchers.push(fs.watch(config, (eventType, filename) => {
@@ -44,6 +48,7 @@ export function watch() {
         watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
             build.build();
+            bundle.bundle();
             log.flush();
         }));
     } else {
@@ -56,12 +61,20 @@ export function watch() {
         watchers.push(fs.watch(systemsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  System changed: " + filename, log.YELLOW);
             build.build();
+            bundle.bundle();
             log.flush();
         }));
     } else {
         log.warn("No Systems directory found...");
     }
 
-
     watchInterval = setInterval(() => { }, 1000);
 }
+
+export const CLIENT_WATCHER = `
+const ws = new WebSocket('ws://localhost:3000');
+ws.onmessage = (message) => {
+    if (message.data === 'reload') {
+        window.location.reload();
+    }
+};`;

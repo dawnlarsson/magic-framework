@@ -13,7 +13,15 @@ async function main() {
 
     log.write(log.MAGENTA + "✨   Magic Framework" + log.RESET + "\nMagic is in a early work in progress state, expect bugs & todos!\n\n");
 
-    const target = settings.parse(process.argv.slice(2));
+    var args = process.argv.slice(2);
+    if (args.length !== 0) {
+        if (args[0] === "#DEV") {
+            settings.devMode();
+            args.shift();
+        }
+    }
+
+    const target = settings.parse(args);
     settings.load();
 
     if (target == null) {

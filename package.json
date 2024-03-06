@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "prep": "bun build\\publish.js",
-    "magic": "bun cli.js"
+    "magic": "bun cli.js #DEV"
   },
   "repository": {
     "type": "git",

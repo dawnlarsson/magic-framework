@@ -1,22 +1,28 @@
 import * as build from "./build.js";
+import * as bundle from "./bundle.js";
 import * as log from "./log.js";
 import * as user from "./user.js";
+
 import fs from "fs";
 import path from "path";
 import process from "process";
 import { version as ver } from "./version.js";
 import * as watch from "./watch.js";
 
+export var projectPath = "";
+export var development_mode = false;
+export const CONFIG_PATH = "magic.config";
+export const MAGIC_DIR = ".magic";
+export const validCWD = isValidProject(".");
+
 // TODO: find a neater way instead 2 arrays for itterating over
 export var config = {
-    dist: "public",
+    dist: "dist",
     src: "src",
     assets: "assets",
     systems: "src/systems"
 };
 
-export var projectPath = "";
-export const CONFIG_PATH = "magic.config";
 
 export const ASSET_TYPES = [
     'mesh',
@@ -35,6 +41,7 @@ export const COMMANDS = [
     { type: "act", name: "dev", takesPath: true, description: "Start development mode", function: watch.watch },
     { type: "act", name: "build", takesPath: true, description: "Build the project", function: build.build },
     { type: "act", name: "setup", takesPath: true, description: "Setup a config file in the current directory", function: setup },
+    { type: "act", name: "bundle", takesPath: true, description: "Bundle the project", function: bundle.bundle },
 
     // User config
     { type: "act", name: "verbose", description: "Toggle verbose logging", function: () => { user.set(user.config.verbose_log, !user.config.verbose_log) } },
@@ -47,9 +54,9 @@ const PROJECT_STRUCTURE = [
     { type: "dir", name: config.assets },
     { type: "dir", name: config.systems },
     ...genAssetSubDirs(),
-    { type: "dir", name: ".magic" },
+    { type: "dir", name: MAGIC_DIR },
     { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },
-    { type: "file", name: ".gitignore", content: ".magic/" },
+    { type: "file", name: ".gitignore", content: MAGIC_DIR },
     { type: "file", name: user.CONFIG_PATH, content: dumpConfig(user.config) },
 ];
 
@@ -212,6 +219,22 @@ function promptNewProject() {
     }
 }
 
+export function isValidProject(project) {
+    const config = path.join(process.cwd(), project, CONFIG_PATH);
+
+    if (!fs.existsSync(config)) return false;
+
+    const magicDir = path.join(process.cwd(), project, MAGIC_DIR);
+
+    if (!fs.existsSync(magicDir)) {
+        log.write("Initializing magic directory...");
+
+        fs.mkdirSync(magicDir, { recursive: true });
+    }
+
+    return true;
+}
+
 export function loadConfig(p) {
     let data;
     try {
@@ -240,4 +263,8 @@ export function loadConfig(p) {
 
 export function version() {
     log.print(ver);
+}
+
+export function devMode() {
+    development_mode = true;
 }

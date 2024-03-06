@@ -6,13 +6,14 @@ import * as log from "./log.js";
 import * as blender from "./blender.js";
 import * as settings from "./settings.js";
 
-export const CONFIG_PATH = ".magic/you.config";
+export const CONFIG_PATH = path.join(".magic", "you.config");
 
 // ? = unknown
 // ! = error - Tried but failed
 // * = warning
 export var config = {
     blender_path: "?",
+    bundler: "bun",
     verbose_log: true
 };
 
