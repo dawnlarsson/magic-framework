@@ -53,6 +53,11 @@ export function watch() {
 
     if (fs.existsSync(srcDir)) {
         watchers.push(fs.watch(srcDir, { recursive: true }, (eventType, filename) => {
+
+            if (filename == "assets.js") {
+                return;
+            }
+
             log.print("🔥  Source changed: " + filename, log.YELLOW);
             build.build();
             bundle.bundle();
