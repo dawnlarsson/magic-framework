@@ -72,9 +72,19 @@ export function rootFileContent() {
         modulePath = modulePath.replace(/\\/g, "\\\\");
     }
 
-
-    // Add a import to the path
+    // Add the Magic import to the path
     buffer += `import "${modulePath}";\n`;
+
+    // Find index.js/ts and import it in the settings.config.src folder
+    const index = path.join(process.cwd(), settings.projectPath, settings.config.src, settings.config.entry);
+    console.log(index);
+
+    if (fs.existsSync(index)) {
+        buffer += `\n// Consumer lib\nimport "${index}";\n`;
+    } else {
+        log.error("No entry file found in the src folder");
+        process.exit(1);
+    }
 
     return buffer;
 }

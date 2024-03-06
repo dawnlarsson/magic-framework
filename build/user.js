@@ -24,7 +24,9 @@ export function load() {
     config = settings.loadConfig(CONFIG_PATH);
 
     if (config.blender_path === "?") {
-        blender.initialSetup();
+
+        // TODO:
+        //blender.initialSetup();
     }
 
     if (config.verbose_log === "false") {

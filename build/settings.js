@@ -20,9 +20,9 @@ export var config = {
     dist: "dist",
     src: "src",
     assets: "assets",
-    systems: "src/systems"
+    systems: "systems",
+    entry: "index.ts",
 };
-
 
 export const ASSET_TYPES = [
     'mesh',

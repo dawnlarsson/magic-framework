@@ -24,8 +24,5 @@
   "bugs": {
     "url": "https://github.com/AlveLarsson/magic-framework/issues"
   },
-  "homepage": "https://magicframe.work/",
-  "devDependencies": {
-    "typescript": "^5.3.3"
-  }
+  "homepage": "https://magicframe.work/"
 }
