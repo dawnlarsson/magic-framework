@@ -114,8 +114,7 @@ export function bunBundle() {
         target: 'browser'
     }).then((res) => {
         if (!res.success) {
-            log.write(log.RED + "\n" + res.logs + log.RESET + "\n");
-            log.flush();
+            throw new AggregateError(res.logs, "Build failed");
         }
     });
 }
