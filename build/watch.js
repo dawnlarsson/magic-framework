@@ -120,8 +120,7 @@ export function reload() {
 }
 
 export const CLIENT_WATCHER = `
-reload();
-function reload() {
+function watch() {
     const ws = new WebSocket('ws://localhost:3000');
     ws.onmessage = (message) => {
         if (message.data === 'reload') {
@@ -130,23 +129,18 @@ function reload() {
     };
 
     ws.onclose = () => {
-        console.log('🔥  Reconnecting to Magic Watcher...');
-
-        setTimeout(() => {
-            reload();
-        }, 600);
+        ws.close();
+        watch();
     };
 
-    ws.onerror = () => {
-        console.log('🔥  Reconnecting to Magic Watcher...');
-
-        setTimeout(() => {
-            reload();
-        }, 600);
-    };
+    ws.onerror = (error) => {
+        ws.close();
+    }
 
     ws.onopen = () => {
         console.log('✨  Connected to Magic');
     };
 }
+
+watch();
 `;
