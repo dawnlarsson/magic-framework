@@ -120,8 +120,10 @@ export function reload() {
 }
 
 export const CLIENT_WATCHER = `
+const local = window.location;
+
 function watch() {
-    const ws = new WebSocket('ws://localhost:3000');
+    const ws = new WebSocket('ws://' + local.hostname + ':3000');
     ws.onmessage = (message) => {
         if (message.data === 'reload') {
             window.location.reload();
