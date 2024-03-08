@@ -38,10 +38,7 @@ export function watch() {
 
     settings.triggerWatchMode();
     watchServer();
-    build.build();
-    bundle.bundle();
-    reload();
-    log.flush();
+    applyChange();
 
     watchers.push(fs.watch(config, (eventType, filename) => {
         log.print("✨   Magic config changed...", log.MAGENTA);
@@ -59,10 +56,7 @@ export function watch() {
             }
 
             log.print("🔥  Source changed: " + filename, log.YELLOW);
-            build.build();
-            bundle.bundle();
-            reload();
-            log.flush();
+            applyChange();
         }));
     }
 
@@ -71,10 +65,7 @@ export function watch() {
     if (fs.existsSync(assetsDir)) {
         watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
-            build.build();
-            bundle.bundle();
-            reload();
-            log.flush();
+            applyChange();
         }));
     } else {
         log.warn("No Assets directory found...");
@@ -85,16 +76,20 @@ export function watch() {
     if (fs.existsSync(systemsDir)) {
         watchers.push(fs.watch(systemsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  System changed: " + filename, log.YELLOW);
-            build.build();
-            bundle.bundle();
-            reload();
-            log.flush();
+            applyChange();
         }));
     } else {
         log.warn("No Systems directory found...");
     }
 
     watchInterval = setInterval(() => { }, 1000);
+}
+
+function applyChange() {
+    build.build();
+    bundle.bundle();
+    reload();
+    log.flush();
 }
 
 function watchServer() {
@@ -105,18 +100,23 @@ function watchServer() {
     ws = new WebSocket.Server({ port: 3000 });
 
     ws.on("connection", (socket) => { });
+    ws.on("error", (error) => { log.error(error); log.flush(); });
 
     return ws;
 }
 
 export function reload() {
-    if (ws) {
-        ws.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send("reload");
-            }
-        });
-    }
+    // The delay here is necessary to ensure that the server has time reload before the client
+    // TODO: propper fix, No time out :3
+    setTimeout(() => {
+        if (ws) {
+            ws.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send("reload");
+                }
+            });
+        }
+    }, 50);
 }
 
 export const CLIENT_WATCHER = `
