@@ -12,19 +12,16 @@ Written in Typescript (mostly)
 ## New magic project
 ```npx magic-framework new <folder-name>```
 
-<hr>
+## Commands
+- `help `             Show this help message
+- `version `          Show the version number and exit
+- `new <path>`        Create a new project at the path
+- `dev <path>`        Start development mode
+- `build <path>`      Build the project
+- `setup <path>`      Setup a config file in the current directory
+- `bundle <path>`     Bundle the project
 
-### Current roster
-- CLI & Project creation
-- Assets & Project hot-reloading
-- Project bundling
-- Data driven per instance state machine
-- Input (keyboard, mouse, mobile touch, controllers (Xbox))
-- Binary static asset bundler
-- Math stuff (WIP)
-- Audio (WIP)
-
-### TODOs:
+## TODOs:
 - Build step version if stateInstancer
 - Audio: volume, pitch
 - MOF: Magic 3D Object Format

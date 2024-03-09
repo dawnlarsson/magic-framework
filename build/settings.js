@@ -6,7 +6,7 @@ import * as user from "./user.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
-import { version as ver } from "./version.js";
+import "./version.js";
 import * as watch from "./watch.js";
 
 export var projectPath = "";
@@ -16,6 +16,7 @@ export var watchMode = false;
 export const CONFIG_PATH = "magic.config";
 export const MAGIC_DIR = ".magic";
 export const validCWD = isValidProject(".");
+export const COMMAND_SPACING = 20;
 
 // TODO: find a neater way instead 2 arrays for itterating over
 export var config = {
@@ -46,8 +47,8 @@ export const COMMANDS = [
     { type: "act", name: "bundle", takesPath: true, description: "Bundle the project", function: bundle.bundle },
 
     // User config
-    { type: "act", name: "verbose", description: "Toggle verbose logging", function: () => { user.set(user.config.verbose_log, !user.config.verbose_log) } },
-    // { type: "mod", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
+    // { type: "flag", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
+    // { type: "flag", name: "debug", description: "Enable debugging mode", function: () => { log.verbose = false; } },
 ];
 
 const PROJECT_STRUCTURE = [
@@ -79,6 +80,7 @@ export function parse(args) {
     var i = 0;
     var skipNext = false;
 
+    // TODO: support for flags
     for (let arg of args) {
         if (skipNext) {
             skipNext = false;
@@ -131,11 +133,11 @@ export function load() {
 
 
 export function help() {
-    var buffer = "Usage: magic [command] [options]\nMagic commands:\n";
+    var buffer = "Usage: magic [command] [options]\n\nMagic commands:\n\n";
 
     var i = 0;
     for (let command of COMMANDS) {
-        buffer += `${log.COLORS[i % log.COLORS.length]}${command.name} ${log.RESET}  ${command.description}\n`;
+        buffer += `${log.COLORS[i % log.COLORS.length]}${command.name} ${log.RESET}`.padEnd(COMMAND_SPACING) + `-- ${command.description}\n`;
         i += 1;
     }
 
@@ -264,7 +266,7 @@ export function loadConfig(p) {
 
 
 export function version() {
-    log.print(ver);
+    log.print(VERSION);
 }
 
 export function devMode() {

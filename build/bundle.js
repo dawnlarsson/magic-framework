@@ -8,8 +8,15 @@ import * as path from "path";
 import { execSync } from "child_process";
 
 export const BUNDLE_ROOT = "bundle.js";
+export var minify = true;
 
-export function bundle() {
+export function bundle(args) {
+
+    if (args) {
+        if (args[1] === "--debug") {
+            minify = false;
+        }
+    }
 
     const bundleFile = settings.projectPath;
 
@@ -33,10 +40,14 @@ export function bundle() {
     generateBundleRoot();
 
     if (user.config.bundler === "bun") {
-        bunBundle();
+        var result = bunBundle();
+        if (result) {
+            return result;
+        }
     }
 
     log.success("Project bundled\n");
+    return null;
 }
 
 // Finds the bundler and deafults it to the user file
@@ -77,6 +88,8 @@ export function rootFileContent() {
 
     if (settings.watchMode) {
         buffer += watch.CLIENT_WATCHER + "\n";
+        // inline the dev.js file next to this file
+        buffer += fs.readFileSync(path.join(__dirname, "dev.js"), "utf8");
     }
 
     // Find index.js/ts and import it in the settings.config.src folder
@@ -110,11 +123,14 @@ export function bunBundle() {
     Bun.build({
         entrypoints: [entry],
         outdir: out,
-        minify: true,
+        minify: minify,
         target: 'browser'
     }).then((res) => {
         if (!res.success) {
             console.log(res.logs);
+            return res.logs;
         }
+
+        return null;
     });
 }

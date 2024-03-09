@@ -13,8 +13,13 @@ var watchInterval;
 var active = false;
 
 var ws;
+var args;
 
-export function watch() {
+export function watch(cliArgs) {
+
+    if (cliArgs) {
+        args = cliArgs;
+    }
 
     for (let watcher of watchers) {
         watcher.close();
@@ -38,7 +43,7 @@ export function watch() {
 
     settings.triggerWatchMode();
     watchServer();
-    applyChange();
+    applyChange(true);
 
     watchers.push(fs.watch(config, (eventType, filename) => {
         log.print("✨   Magic config changed...", log.MAGENTA);
@@ -56,7 +61,7 @@ export function watch() {
             }
 
             log.print("🔥  Source changed: " + filename, log.YELLOW);
-            applyChange();
+            applyChange(false);
         }));
     }
 
@@ -65,7 +70,7 @@ export function watch() {
     if (fs.existsSync(assetsDir)) {
         watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  Asset changed: " + filename, log.YELLOW);
-            applyChange();
+            applyChange(true);
         }));
     } else {
         log.warn("No Assets directory found...");
@@ -76,7 +81,7 @@ export function watch() {
     if (fs.existsSync(systemsDir)) {
         watchers.push(fs.watch(systemsDir, { recursive: true }, (eventType, filename) => {
             log.print("🔥  System changed: " + filename, log.YELLOW);
-            applyChange();
+            applyChange(false);
         }));
     } else {
         log.warn("No Systems directory found...");
@@ -85,9 +90,17 @@ export function watch() {
     watchInterval = setInterval(() => { }, 1000);
 }
 
-function applyChange() {
-    build.build();
-    bundle.bundle();
+function applyChange(buildAssets = true) {
+
+    if (buildAssets) build.build();
+
+    var result = bundle.bundle(args);
+
+    if (result != null) {
+        reportError(result);
+        return;
+    }
+
     reload();
     log.flush();
 }
@@ -102,7 +115,23 @@ function watchServer() {
     ws.on("connection", (socket) => { });
     ws.on("error", (error) => { log.error(error); log.flush(); });
 
+    ws.onmessage = (message) => {
+        log.print(message, log.RED);
+        log.flush();
+    };
+
     return ws;
+}
+
+export function reportError(error) {
+    if (error === true || error === undefined) { return; }
+    if (ws) {
+        ws.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ error: error }));
+            }
+        });
+    }
 }
 
 export function reload() {
@@ -118,31 +147,3 @@ export function reload() {
         }
     }, 50);
 }
-
-export const CLIENT_WATCHER = `
-const local = window.location;
-
-function watch() {
-    const ws = new WebSocket('ws://' + local.hostname + ':3000');
-    ws.onmessage = (message) => {
-        if (message.data === 'reload') {
-            window.location.reload();
-        }
-    };
-
-    ws.onclose = () => {
-        ws.close();
-        watch();
-    };
-
-    ws.onerror = (error) => {
-        ws.close();
-    }
-
-    ws.onopen = () => {
-        console.log('✨  Connected to Magic');
-    };
-}
-
-watch();
-`;
