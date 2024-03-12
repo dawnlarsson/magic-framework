@@ -23,7 +23,6 @@ export var config = {
     dist: "dist",
     src: "src",
     assets: "assets",
-    systems: "systems",
     entry: "index.ts",
 };
 
@@ -55,7 +54,6 @@ const PROJECT_STRUCTURE = [
     { type: "dir", name: config.src },
     { type: "dir", name: config.dist },
     { type: "dir", name: config.assets },
-    { type: "dir", name: config.systems },
     ...genAssetSubDirs(),
     { type: "dir", name: MAGIC_DIR },
     { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },

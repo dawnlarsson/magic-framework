@@ -72,3 +72,9 @@ for (let command of COMMANDS) {
 const newReadme = README.replace(/## Commands[\s\S]*##/, buffer + "\n##");
 
 fs.writeFileSync(README_PATH, newReadme);
+
+const WATCH_PATH = path.join(process.cwd(), "build", "watch.js");
+const WATCH = fs.readFileSync(WATCH_PATH, "utf8");
+
+const newWatch = WATCH.replace("const DEV_MODE = true;", "const DEV_MODE = false;");
+fs.writeFileSync(WATCH_PATH, newWatch);

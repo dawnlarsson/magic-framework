@@ -12,6 +12,17 @@ Written in Typescript (mostly)
 ## New magic project
 ```npx magic-framework new <folder-name>```
 
+## Current roster
+- CLI & Project creation
+- CLI <--> Client debug bridge, connection status overlay
+- Assets & Project hot-reloading
+- Project bundling
+- Data driven per instance state machine
+- Input (keyboard, mouse, mobile touch, controllers (Xbox))
+- Binary static asset bundler
+- Math stuff (WIP)
+- Audio (WIP)
+
 ## Commands
 - `help `             Show this help message
 - `version `          Show the version number and exit
@@ -32,7 +43,6 @@ Written in Typescript (mostly)
 - Blender: .blend hot-reload exporter
 - Chunked hot reload (no full rebuild)
 - Webgpu & WebGL stuff
-- Investigate: in-browser hot-reloading
 - Investigate: wasm module hot reload
 - Investigate: Image formats, custom wasm decoder? 
 - Investigate: Zig support (wasm)

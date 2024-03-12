@@ -30,24 +30,26 @@ export function bundle(args) {
     log.write(buffer);
     log.flush();
 
+    /*
     if (user.config.bundler === "?") {
         if (!findBundler()) {
             log.error("No bundler found");
             process.exit(1);
         }
-    }
+    }*/
 
     generateBundleRoot();
 
-    if (user.config.bundler === "bun") {
-        var result = bunBundle();
-        if (result) {
-            return result;
-        }
+    if (user.config.bundler !== "bun") {
+        log.error("Bun is the only supported bundler at the moment");
+        process.exit(1);
     }
 
-    log.success("Project bundled\n");
-    return null;
+    var result = true;
+
+    result = bunBundle();
+
+    return result;
 }
 
 // Finds the bundler and deafults it to the user file
@@ -116,21 +118,21 @@ export function generateBundleRoot() {
 
 }
 
-export function bunBundle() {
+export async function bunBundle() {
     const entry = path.join(process.cwd(), settings.projectPath, settings.MAGIC_DIR, BUNDLE_ROOT);
     const out = path.join(process.cwd(), settings.projectPath, settings.config.dist);
 
-    Bun.build({
+    const res = await Bun.build({
         entrypoints: [entry],
         outdir: out,
         minify: minify,
         target: 'browser'
-    }).then((res) => {
-        if (!res.success) {
-            console.log(res.logs);
-            return res.logs;
-        }
-
-        return null;
     });
+
+    if (!res.success) {
+        console.log(res.logs);
+        return res.logs;
+    }
+
+    return null;
 }
