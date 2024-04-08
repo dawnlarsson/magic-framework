@@ -24,6 +24,7 @@ export var config = {
     src: "src",
     assets: "assets",
     entry: "index.ts",
+    port: "2370",
 };
 
 export const ASSET_TYPES = [
@@ -78,7 +79,6 @@ export function parse(args) {
     var i = 0;
     var skipNext = false;
 
-    // TODO: support for flags
     for (let arg of args) {
         if (skipNext) {
             skipNext = false;

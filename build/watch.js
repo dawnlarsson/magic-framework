@@ -113,7 +113,7 @@ function watchServer() {
         return;
     }
 
-    ws = new WebSocket.Server({ port: 3000 });
+    ws = new WebSocket.Server({ port: settings.config.port });
 
     ws.onmessage = (message) => {
 

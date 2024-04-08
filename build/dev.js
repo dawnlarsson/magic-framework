@@ -5,7 +5,7 @@ var lostConnection = false;
 const maxLogLength = 1000;
 var logs = [];
 
-const MAGIC_SERVER = window.location.protocol === "https:" ? 'wss://' : 'ws://' + local.hostname + ':3000';
+const MAGIC_SERVER = window.location.protocol === "https:" ? 'wss://' : 'ws://' + local.hostname + ':' + MAGIC_PORT;
 
 // Intercept all console logs
 const logfn = console.log

@@ -13,7 +13,7 @@ export var minify = true;
 export function bundle(args) {
 
     if (args) {
-        if (args[1] === "--debug") {
+        if (args.has( "--debug")) {
             minify = false;
         }
     }
@@ -70,6 +70,7 @@ export function rootFileContent() {
 
     if (!settings.development_mode) {
         if (!fs.existsSync(modulePath)) {
+            minify = false;
 
             var modulePath = path.join(settings.projectPath, "node_modules/magic-framework/index.js");
 
@@ -89,6 +90,8 @@ export function rootFileContent() {
     buffer += `import "${modulePath}";\n`;
 
     if (settings.watchMode) {
+        buffer += "const MAGIC_PORT = " + settings.config.port + ";\n";
+
         buffer += watch.CLIENT_WATCHER + "\n";
         // inline the dev.js file next to this file
         buffer += fs.readFileSync(path.join(__dirname, "dev.js"), "utf8");
