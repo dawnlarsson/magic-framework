@@ -1,6 +1,6 @@
 import process from "process";
 
-export var buffer = "";
+export var buffer = "Magic Framework (Work in progress! expect bugs & todos!)\n";
 
 export const
     RED = "\x1b[91m",
@@ -13,16 +13,15 @@ export const
     WHITE = "\x1b[97m";
 
 export const COLORS = [RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN];
-export const TIMER_SIG = GREEN + "⌛️   Magic total runtime" + RESET;
 
 export function print(message, color) {
     if (!color) color = RESET;
     buffer += color + message + RESET + "\n";
 }
 
-export function success(message) { buffer += GREEN + "✅   " + message + RESET + "\n" }
-export function warn(message) { buffer += YELLOW + "⚠️    " + message + RESET + "\n" }
-export function error(message) { buffer += RED + "🛑   Error: " + RESET + message + "\n" }
+export function success(message) { buffer += GREEN + "✅  " + message + RESET + "\n" }
+export function warn(message) { buffer += YELLOW + "⚠️  " + message + RESET + "\n" }
+export function error(message) { buffer += RED + "🛑  Error: " + RESET + message + "\n" }
 
 export function write(content) {
     buffer += content;
@@ -38,4 +37,7 @@ export function disableVerbose() {
     print = () => { }
 }
 
-process.on('exit', flush);
+process.on('exit', () => { 
+    flush();
+    console.timeEnd("Magic runtime") 
+});

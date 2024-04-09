@@ -6,7 +6,7 @@ import * as user from "./user.js";
 import fs from "fs";
 import path from "path";
 import process from "process";
-import "./version.js";
+import { VERSION } from "./version.js";
 import * as watch from "./watch.js";
 
 export var projectPath = "";
@@ -35,16 +35,16 @@ export const ASSET_TYPES = [
 
 export const COMMANDS = [
     // Info
-    { type: "act", name: "help", description: "Show this help message", function: help },
-    { type: "act", name: "version", description: "Show the version number and exit", function: version },
+    { type: "info", name: "help", function: help, description: "Show this help message" },
+    { type: "info", name: "version", function: version, description: "Show the version number and exit" },
 
     // Project actions
     // takes path expects the next argument
-    { type: "act", name: "new", takesPath: true, description: "Create a new project at the path", function: project },
-    { type: "act", name: "dev", takesPath: true, description: "Start development mode", function: watch.watch },
-    { type: "act", name: "build", takesPath: true, description: "Build the project", function: build.build },
-    { type: "act", name: "setup", takesPath: true, description: "Setup a config file in the current directory", function: setup },
-    { type: "act", name: "bundle", takesPath: true, description: "Bundle the project", function: bundle.bundle },
+    { type: "act", name: "new", function: project, description: "Create a new project at the path" },
+    { type: "act", name: "dev", function: watch.watch, description: "Start development mode" },
+    { type: "act", name: "build", function: build.build, description: "Build the project" },
+    { type: "act", name: "setup", function: setup, description: "Setup a config file in the current directory" },
+    { type: "act", name: "bundle", function: bundle.bundle, description: "Bundle the project" },
 
     // User config
     // { type: "flag", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
@@ -72,50 +72,21 @@ function genAssetSubDirs() {
 }
 
 export function parse(args) {
+    if (args.length === 0) return null;
+    
     var action = null;
 
-    if (args.length === 0) return null;
-
-    var i = 0;
-    var skipNext = false;
-
-    for (let arg of args) {
-        if (skipNext) {
-            skipNext = false;
-            continue;
-        }
-
+    for (let argument of args) {
         for (let command of COMMANDS) {
-
-            if (command.name !== arg) continue;
-
-            // Remove the argument from the list
-            args = args.filter((item) => item !== arg);
-
-            if (command.type === "act") {
-
-                if (command.takesPath) {
-                    if (i + 1 <= args.length) {
-                        projectPath = args[i];
-                        skipNext = true;
-                    }
-                }
-
+            if (argument === command.name) {
                 action = command.function;
-                continue;
-            }
-
-            if (command.type === "mod") {
-                command.function();
-                continue;
+                args.shift();
+                break;
             }
         }
-        i++;
     }
 
-    if (!action) return null;
-
-    return () => { action(args) };
+    return { function: action, arguments: args };
 }
 
 // Loads the config at the root of the project
@@ -139,7 +110,7 @@ export function help() {
         i += 1;
     }
 
-    log.write(buffer + "\n");
+    log.write(buffer);
 }
 
 export function dumpConfig(data) {
@@ -208,7 +179,7 @@ function promptNewProject() {
     process.stdin.on('data', function (data) {
         data = data.toString().trim();
 
-        if (data === "y" || data === "yes" || data === "Y" || data === "Yes" || data === "tuta och kör") {
+        if (data === "y" || data === "yes" || data === "Y" || data === "Yes") {
             process.stdin.end();
             project(projectPath);
         }
