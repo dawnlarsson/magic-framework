@@ -12,12 +12,6 @@ export var minify = true;
 
 export function bundle(args) {
 
-    if (args) {
-        if (args.has( "--debug")) {
-            minify = false;
-        }
-    }
-
     const bundleFile = settings.projectPath;
 
     if (!settings.isValidProject(bundleFile)) {
@@ -57,8 +51,6 @@ export function bundle(args) {
 export function findBundler() {
 
     // Check if we have bun bun
-
-
     return false
 }
 
@@ -70,16 +62,16 @@ export function rootFileContent() {
 
     if (!settings.development_mode) {
         if (!fs.existsSync(modulePath)) {
-            minify = false;
 
             var modulePath = path.join(settings.projectPath, "node_modules/magic-framework/index.js");
 
             if (!fs.existsSync(modulePath)) {
-                log.error("No magic-framework module found");
+                log.error("No magic-framework module found!  Did you initialize the project? ");
                 process.exit(1);
             }
         }
     } else {
+        minify = false;
         buffer += "// Development mode\nwindow.magic_dev = true;\n";
 
         modulePath = path.join(process.cwd(), "index.ts");

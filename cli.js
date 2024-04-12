@@ -20,6 +20,8 @@ async function main() {
         return;
     }
 
+    console.log(`Running command: ${command.function.name}  >  with arguments:   ${command.arguments}`);
+
     command.function(command.arguments);
 }
 

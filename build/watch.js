@@ -20,9 +20,7 @@ var args;
 
 export function watch(cliArgs) {
 
-    if (cliArgs) {
-        args = cliArgs;
-    }
+    args = cliArgs;
 
     for (let watcher of watchers) {
         watcher.close();
@@ -35,9 +33,9 @@ export function watch(cliArgs) {
     }
 
     const config = path.join(settings.projectPath, settings.CONFIG_PATH);
-
+    
     if (!fs.existsSync(config)) {
-        log.error("No magic.config file found");
+        log.error("No magic.config file found at path: " + config);
         process.exit(1);
     }
 

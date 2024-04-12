@@ -81,6 +81,12 @@ export function parse(args) {
             if (argument === command.name) {
                 action = command.function;
                 args.shift();
+                
+                if(command.type === "act") {
+                    projectPath = args[0];
+                    args.shift();
+                }
+            
                 break;
             }
         }
