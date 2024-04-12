@@ -92,6 +92,8 @@ export function parse(args) {
         }
     }
 
+    if (!action) return null;
+
     return { function: action, arguments: args };
 }
 
