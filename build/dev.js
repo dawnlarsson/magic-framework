@@ -1,12 +1,16 @@
-const local = window.location;
-const MAGIC_SERVER = window.location.protocol === "https:" ? 'wss://' : 'ws://' + local.hostname + ':' + MAGIC_PORT;
-const maxLogLength = 1000;
-var reportBuffer = [];
 
-// Watcher
+// This script is injected in the client side to provide a live connection with the development server
+// find this source in the build/dev.js file on node-modules/magic-framework/build/dev.js
+// Variables --------------------------------------------------------------------
 var ws;
 var lostConnection = false;
 var logs = [];
+var reportBuffer = [];
+
+// Constants definitions --------------------------------------------------------
+const local = window.location;
+const MAGIC_SERVER = window.location.protocol === "https:" ? 'wss://' : 'ws://' + local.hostname + ':' + MAGIC_PORT;
+const maxLogLength = 1000;
 
 // Intercept all console logs
 const logfn = console.log
@@ -97,7 +101,7 @@ const MAGIC_LAYER = `
 </div>
 ` + MAGIC_STYLE;
 
-document.body.insertAdjacentHTML('beforeend', MAGIC_LAYER)
+// Functions --------------------------------------------------------------------
 
 function watch() {
     ws = new WebSocket(MAGIC_SERVER);
@@ -137,12 +141,6 @@ function report(rep) {
     ws.send(rep);
 }
 
-console.error = function (err) {
-    errfn(err)
-    logs.push("ERR#" + err)
-    update()
-    report(err)
-}
 
 function update() {
     if (lostConnection) {
@@ -177,5 +175,16 @@ function update() {
     }
 
 }
+
+// Exec section -----------------------------------------------------------------
+
+console.error = function (err) {
+    errfn(err)
+    logs.push("ERR#" + err)
+    update()
+    report(err)
+}
+
+document.body.insertAdjacentHTML('beforeend', MAGIC_LAYER)
 
 watch();
