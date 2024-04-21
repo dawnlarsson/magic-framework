@@ -206,6 +206,11 @@ function promptNewProject() {
 }
 
 export function isValidProject(project) {
+    if (!project) {
+        log.error("No project path provided");
+        return false;
+    }
+
     const config = path.join(process.cwd(), project, CONFIG_PATH);
 
     if (!fs.existsSync(config)) return false;

@@ -107,7 +107,7 @@ export function rootFileContent() {
 export function generateBundleRoot() {
 
     const rootFile = path.join(settings.projectPath, settings.MAGIC_DIR, BUNDLE_ROOT);
-    log.write("📦   Generating bundle root file: " + rootFile + "\n");
+    log.write("Generating bundle root file: " + rootFile + "\n");
 
     fs.writeFileSync(rootFile, rootFileContent());
 
