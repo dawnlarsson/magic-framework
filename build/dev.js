@@ -9,18 +9,13 @@ var reportBuffer = [];
 
 // Constants definitions --------------------------------------------------------
 const local = window.location;
-const MAGIC_SERVER = window.location.protocol === "https:" ? 'wss://' : 'ws://' + local.hostname + ':' + MAGIC_PORT;
+const MAGIC_SERVER = 'ws://' + local.hostname + ':' + MAGIC_PORT;
 const maxLogLength = 1000;
 
 // Intercept all console logs
 const logfn = console.log
 const warnfn = console.warn
 const errfn = console.error
-
-// Overlay
-const overlay = document.getElementById('magic_layer')
-const disconnect = document.getElementById('magic-disconnect');
-const logList = document.getElementById('magic-log-list');
 
 const ICON_DISCONNECTED = `<svg class="magic-blink" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="m21.8 4.2.9 1.2 4.1 6L28 13H16.2l1-1.5 3.8-6 .8-1.3Zm0 3.6-2 3.2h4.3l-2.2-3.2Zm-8 18.2A10 10 0 0 0 6 18.2V26h7.8Zm2.2 2h7A19 19 0 0 0 4 9v19h12ZM6 16.2v-5A17 17 0 0 1 20.9 26h-5A12 12 0 0 0 6 16.2Z" fill="#FF406C"/></svg>`
 
@@ -183,5 +178,10 @@ console.error = function (err) {
 }
 
 document.body.insertAdjacentHTML('beforeend', MAGIC_LAYER)
+
+// Overlay
+const overlay = document.getElementById('magic_layer')
+const disconnect = document.getElementById('magic-disconnect');
+const logList = document.getElementById('magic-log-list');
 
 watch();

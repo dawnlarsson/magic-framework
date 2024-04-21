@@ -107,7 +107,8 @@ function watchServer() {
         return;
     }
 
-    ws = new WebSocket("wss://127.0.0.1:" + settings.config.port);
+    // TODO: Ideally we want wss
+    ws = new WebSocket("ws://127.0.0.1:" + settings.config.port);
 
     ws.onmessage = (message) => {
 
@@ -117,14 +118,12 @@ function watchServer() {
     };
 
     ws.on("connection", (socket) => {
-        log.print("Client connected >? " + socket.protocol, log.YELLOW);
         log.flush();
     });
 
-    ws.on("close", () => { log.print("Client disconnected", log.YELLOW); log.flush(); });
+    ws.on("close", () => { });
 
-    ws.on("error", (error) => { log.error(error); log.flush(); });
-
+    ws.on("error", (error) => { console.log(error); });
 
     return ws;
 }
