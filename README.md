@@ -3,11 +3,7 @@
   <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
 </a>
 
-A collection of utils and implementations for web games,
-with the goal of making web games concerned about speed and bundle size easy.
-some parts are ported from my private Zig engine.
-
-Written in Typescript (mostly)
+Written in Typescript (mostly), js for builds
 
 ## New magic project
 ```npx magic-framework new <folder-name>```

@@ -1,7 +1,7 @@
 var gamepads = navigator.getGamepads();
 
 // TODO: cover more input types
-// TODO: explore changeing the map to a Float32Array and generate a key moduel
+// TODO: explore changing the map to a Float32Array and generate a key module
 export var map = {
     mouseX: 0.0,
     mouseY: 0.0,
@@ -20,65 +20,31 @@ export var map = {
     secondaryUp: false
 }
 
-function keyReset() {
-    map.mouseX = 0.0
-    map.mouseY = 0.0
-    map.mouseXDiff = 0.0
-    map.mouseYDiff = 0.0
-    map.forward = 0.0
-    map.backward = 0.0
-    map.left = 0.0
-    map.right = 0.0
-    map.shift = false
-    map.primary = false
-    map.primaryDown = false
-    map.primaryUp = false
-    map.secondary = false
-    map.secondaryDown = false
-    map.secondaryUp = false
-}
-
-function keydown(e) {
-    switch (e.code) {
-        case 'ArrowUp':
-        case 'KeyW':
-            map.forward = 1.0
-            break
-        case 'ArrowDown':
-        case 'KeyS':
-            map.backward = 1.0
-            break
-        case 'ArrowLeft':
-        case 'KeyA':
-            map.left = 1.0
-            break
-        case 'ArrowRight':
-        case 'KeyD':
-            map.right = 1.0
-            break
-        case 'ShiftLeft':
-            map.shift = true
-            break
+export function reset() {
+    for (let key in map) {
+        map[key] = 0.0
     }
 }
 
-function keyup(e) {
+// updates a primary directional key
+// this is todo
+function set(e, val) {
     switch (e.code) {
         case 'ArrowUp':
         case 'KeyW':
-            map.forward = 0.0
+            map.forward = val
             break
         case 'ArrowDown':
         case 'KeyS':
-            map.backward = 0.0
+            map.backward = val
             break
         case 'ArrowLeft':
         case 'KeyA':
-            map.left = 0.0
+            map.left = val
             break
         case 'ArrowRight':
         case 'KeyD':
-            map.right = 0.0
+            map.right = val
             break
         case 'ShiftLeft':
             map.shift = false
@@ -87,32 +53,11 @@ function keyup(e) {
 }
 
 export function update() {
+    gamepads.forEach((gamepad) => {
+        if (!gamepad) return
 
-    for (let i = 0; i < gamepads.length; i++) {
-        const gamepad = gamepads[i];
-        if (!gamepad) {
-            break;
-        }
-
-        if (gamepad.buttons[0].pressed || gamepad.buttons[7].pressed) {
-            if (!map.primaryDown) {
-                map.primary = true
-                map.primaryDown = true
-            }
-        } else {
-            if (map.primaryDown) map.primaryUp = true
-            map.primaryDown = false
-        }
-
-        if (gamepad.buttons[1].pressed || gamepad.buttons[6].pressed) {
-            if (!map.secondaryDown) {
-                map.secondary = true
-                map.secondaryDown = true
-            }
-        } else {
-            if (map.secondaryDown) map.secondaryUp = true
-            map.secondaryDown = false
-        }
+        map.primary = map.primary || (gamepad.buttons[0] || gamepad.buttons[7])
+        map.secondary = map.secondary || (gamepad.buttons[1] || gamepad.buttons[6])
 
         if (gamepad.axes[0] > 0.6) {
             map.right = gamepad.axes[0]
@@ -125,7 +70,7 @@ export function update() {
         } else {
             map.left = 0.0
         }
-    }
+    });
 }
 
 export function lateUpdate() {
@@ -140,6 +85,7 @@ export function lateUpdate() {
 export function vibrate(strength = 1, duration = 100) {
     gamepads.forEach((gamepad) => {
         if (!gamepad) return
+
         gamepad.vibrationActuator.playEffect('dual-rumble', {
             duration: duration,
             strongMagnitude: strength,
@@ -158,23 +104,23 @@ export function setup() {
     window.addEventListener('gamepaddisconnected', (e) => { gamepads = navigator.getGamepads() })
 
     window.addEventListener('blur', (e) => {
-        keyReset()
+        reset()
     })
 
     window.addEventListener('focusout', (e) => {
-        keyReset()
+        reset()
     })
 
     window.addEventListener('focus', (e) => {
-        keyReset()
+        reset()
     })
 
     window.addEventListener('keydown', (e) => {
-        keydown(e)
+        set(e, 1.0)
     })
 
     window.addEventListener('keyup', (e) => {
-        keyup(e)
+        set(e, 0.0)
     })
 
     var lastMouseX: number = 0
@@ -194,7 +140,7 @@ export function setup() {
     })
 
     window.addEventListener('touchend', (e) => {
-        keyReset()
+        reset()
     })
 
     var lastTouchX: number = 0
