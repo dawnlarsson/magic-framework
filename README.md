@@ -2,8 +2,7 @@
 <a href="https://www.npmjs.com/package/magic-framework">
   <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
 </a>
-
-Written in Typescript (mostly), js for builds
+this is embarrassingly drafty
 
 ## New magic project
 ```npx magic-framework new <folder-name>```

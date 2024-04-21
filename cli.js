@@ -9,18 +9,16 @@ import * as user from "./build/user.js";
 
 async function main() {
     const args = process.argv.slice(2);
-    
+
     user.load();
 
     const command = settings.parse(args);
     settings.load();
 
-    if(!command) {
+    if (!command) {
         settings.help();
         return;
     }
-
-    console.log(`Running command: ${command.function.name}  >  with arguments:   ${command.arguments}`);
 
     command.function(command.arguments);
 }

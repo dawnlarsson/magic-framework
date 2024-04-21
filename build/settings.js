@@ -73,7 +73,7 @@ function genAssetSubDirs() {
 
 export function parse(args) {
     if (args.length === 0) return null;
-    
+
     var action = null;
 
     for (let argument of args) {
@@ -81,12 +81,16 @@ export function parse(args) {
             if (argument === command.name) {
                 action = command.function;
                 args.shift();
-                
-                if(command.type === "act") {
+
+                if (command.type === "act") {
+                    if (args.length === 0) {
+                        log.error("No path provided for: " + command.name);
+                        return null;
+                    }
+
                     projectPath = args[0];
-                    args.shift();
                 }
-            
+
                 break;
             }
         }
@@ -146,7 +150,8 @@ export function setup() {
 export function project(path) {
 
     if (path.length === 0) {
-        path[0] = process.cwd();
+        log.error("No path provided for new project");
+        return;
     }
 
     if (fs.existsSync(path[0])) {
