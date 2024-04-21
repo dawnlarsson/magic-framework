@@ -39,13 +39,11 @@ function watch() {
     };
 }
 
-var hasBufferdReports = false;
 var reportBuffer = [];
 
 function report(rep) {
 
     if (ws.readyState !== 1) {
-        hasBufferdReports = true;
         reportBuffer.push(rep);
         return;
     }
@@ -186,14 +184,10 @@ function update() {
 
     report("Test error message")
 
-    if (hasBufferdReports) {
-        if (ws.readyState === 1) {
-            hasBufferdReports = false;
-
-            var copyBuffer = reportBuffer;
+    if (ws.readyState === 1) {
+        if (reportBuffer.length > 0) {
+            reportBuffer.forEach(report);
             reportBuffer = [];
-
-            copyBuffer.forEach(report);
         }
     }
 

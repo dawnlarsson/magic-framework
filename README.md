@@ -1,11 +1,11 @@
-# Magic Framework
+# Magic Framework™
 <a href="https://www.npmjs.com/package/magic-framework">
   <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
 </a>
 
-this is embarrassingly drafty
+this is embarrassingly drafty/experimental
 
-## Current roster
+## Allegedly current roster
 - CLI & Project creation
 - CLI <--> Client debug bridge, connection status overlay
 - Assets & Project hot-reloading
