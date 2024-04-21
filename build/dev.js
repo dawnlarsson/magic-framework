@@ -105,7 +105,6 @@ const MAGIC_LAYER = `
 
 function watch() {
     ws = new WebSocket(MAGIC_SERVER);
-    console.log(ws.readyState)
     ws.onmessage = (message) => {
         if (message.data === 'reload') {
             window.location.reload();

@@ -20,6 +20,8 @@ export const MAGIC_DIR = ".magic";
 export const validCWD = isValidProject(".");
 export const COMMAND_SPACING = 20;
 
+export const DEFAULT_PORT = 2370;
+
 const NEW_CFG = { name: "your-project", version: "0.1.0", scripts: { dev: "magic dev", build: "magic build" }, dependencies: { "magic-framework": "^0.1.0" } };
 
 export var config = {
@@ -27,7 +29,7 @@ export var config = {
     src: "src",
     assets: "assets",
     entry: "index.ts",
-    port: "2370",
+    port: DEFAULT_PORT,
 };
 
 export const ASSET_TYPES = [
@@ -252,7 +254,7 @@ export function loadConfig(p) {
         return;
     }
 
-    var output = {};
+    var output = config;
 
     const lines = data.split(/\r?\n/); // Handles both \n and \r\n
 

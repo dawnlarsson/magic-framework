@@ -107,7 +107,7 @@ function watchServer() {
         return;
     }
 
-    ws = new WebSocket.Server({ port: settings.config.port });
+    ws = new WebSocket("wss://127.0.0.1:" + settings.config.port);
 
     ws.onmessage = (message) => {
 
@@ -144,6 +144,10 @@ export function reload() {
     // TODO: propper fix, No time out :3
     setTimeout(() => {
         if (ws) {
+
+            if (ws.readyState !== 1) { return; }
+            if (ws.clients.size === 0) { return; }
+
             ws.clients.forEach((client) => {
                 client.send("reload");
             });
