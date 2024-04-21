@@ -66,7 +66,7 @@ export function rootFileContent() {
             var modulePath = path.join(settings.projectPath, "node_modules/magic-framework/index.js");
 
             if (!fs.existsSync(modulePath)) {
-                log.error("No magic-framework module found!  Did you initialize the project? ");
+                log.error("No magic-framework module found!  Did you initialize the project with npm/bun? ");
                 process.exit(1);
             }
         }

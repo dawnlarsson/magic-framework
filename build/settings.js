@@ -1,11 +1,13 @@
+import fs from "fs";
+import path from "path";
+import process from "process";
+import { execSync } from "child_process";
+
 import * as build from "./build.js";
 import * as bundle from "./bundle.js";
 import * as log from "./log.js";
 import * as user from "./user.js";
 
-import fs from "fs";
-import path from "path";
-import process from "process";
 import { VERSION } from "./version.js";
 import * as watch from "./watch.js";
 
@@ -17,6 +19,8 @@ export const CONFIG_PATH = "magic.config";
 export const MAGIC_DIR = ".magic";
 export const validCWD = isValidProject(".");
 export const COMMAND_SPACING = 20;
+
+const NEW_CFG = { name: "your-project", version: "0.1.0", scripts: { dev: "magic dev", build: "magic build" }, dependencies: { "magic-framework": "^0.1.0" } };
 
 // TODO: find a neater way instead 2 arrays for itterating over
 export var config = {
@@ -59,6 +63,7 @@ const PROJECT_STRUCTURE = [
     { type: "dir", name: MAGIC_DIR },
     { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },
     { type: "file", name: ".gitignore", content: MAGIC_DIR },
+    { type: "file", name: "package.json", content: JSON.stringify(NEW_CFG, null, 2) },
     { type: "file", name: user.CONFIG_PATH, content: dumpConfig(user.config) },
 ];
 
@@ -180,6 +185,13 @@ export function project(path) {
         }
 
     }
+
+    const projectDirectory = path[0];
+
+    log.print("Running 'bun i' in the project directory: " + projectDirectory, log.GREEN);
+    log.flush();
+
+    execSync("bun i", { cwd: projectDirectory });
 }
 
 function promptNewProject() {

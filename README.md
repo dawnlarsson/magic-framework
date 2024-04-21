@@ -5,9 +5,6 @@
 
 this is embarrassingly drafty
 
-## New magic project
-```npx magic-framework new <folder-name>```
-
 ## Current roster
 - CLI & Project creation
 - CLI <--> Client debug bridge, connection status overlay

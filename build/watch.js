@@ -33,13 +33,12 @@ export function watch(cliArgs) {
     }
 
     const config = path.join(settings.projectPath, settings.CONFIG_PATH);
-    
+
     if (!fs.existsSync(config)) {
         log.error("No magic.config file found at path: " + config);
         process.exit(1);
     }
 
-    if (!active) log.print("✨   Running development mode, watching for changes...", log.MAGENTA);
     active = true;
 
     settings.triggerWatchMode();
@@ -47,16 +46,13 @@ export function watch(cliArgs) {
     applyChange(true, "watch_start");
 
     watchers.push(fs.watch(config, (eventType, filename) => {
-        log.print("✨   Magic config changed...", log.MAGENTA);
         settings.load();
         watch();
     }));
 
     if (DEV_MODE) {
-        log.print("✨   MAGIC MODULE DEVELOPMENT MODE ACTIVE... ", log.MAGENTA);
-
         watchers.push(fs.watch(path.join(settings.projectPath, "node_modules/magic-framework"), { recursive: true }, (eventType, filename) => {
-            log.print("🔥  Magic framework changed: " + filename, log.YELLOW);
+            log.print("Magic framework changed: " + filename, log.YELLOW);
             applyChange(true, "watch_magic_config");
         }));
     }
@@ -70,7 +66,7 @@ export function watch(cliArgs) {
                 return;
             }
 
-            log.print("🔥  Source changed: " + filename, log.YELLOW);
+            log.print("Source changed: " + filename, log.YELLOW);
             console.trace();
 
             applyChange(false, "watch_src");
@@ -81,7 +77,7 @@ export function watch(cliArgs) {
 
     if (fs.existsSync(assetsDir)) {
         watchers.push(fs.watch(assetsDir, { recursive: true }, (eventType, filename) => {
-            log.print("🔥  Asset changed: " + filename, log.YELLOW);
+            log.print("Asset changed: " + filename, log.YELLOW);
             applyChange(true, "watch_assets");
         }));
     } else {
@@ -121,11 +117,11 @@ function watchServer() {
     };
 
     ws.on("connection", (socket) => {
-        log.print("🔥   Client connected >? " + socket.protocol, log.YELLOW);
+        log.print("Client connected >? " + socket.protocol, log.YELLOW);
         log.flush();
     });
 
-    ws.on("close", () => { log.print("🔥   Client disconnected", log.YELLOW); log.flush(); });
+    ws.on("close", () => { log.print("Client disconnected", log.YELLOW); log.flush(); });
 
     ws.on("error", (error) => { log.error(error); log.flush(); });
 
