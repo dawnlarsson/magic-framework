@@ -11,7 +11,7 @@ import * as user from "./user.js";
 import { VERSION } from "./version.js";
 import * as watch from "./watch.js";
 
-export var projectPath = "";
+export var projectPath = ""; // TODO: Nuke me
 export var development_mode = false;
 export var watchMode = false;
 
@@ -22,7 +22,6 @@ export const COMMAND_SPACING = 20;
 
 const NEW_CFG = { name: "your-project", version: "0.1.0", scripts: { dev: "magic dev", build: "magic build" }, dependencies: { "magic-framework": "^0.1.0" } };
 
-// TODO: find a neater way instead 2 arrays for itterating over
 export var config = {
     dist: "dist",
     src: "src",
@@ -45,10 +44,10 @@ export const COMMANDS = [
     // Project actions
     // takes path expects the next argument
     { type: "act", name: "new", function: project, description: "Create a new project at the path" },
-    { type: "act", name: "dev", function: watch.watch, description: "Start development mode" },
-    { type: "act", name: "build", function: build.build, description: "Build the project" },
     { type: "act", name: "setup", function: setup, description: "Setup a config file in the current directory" },
-    { type: "act", name: "bundle", function: bundle.bundle, description: "Bundle the project" },
+    { type: "act", cwdOkay: true, name: "dev", function: watch.watch, description: "Start development mode" },
+    { type: "act", cwdOkay: true, name: "build", function: build.build, description: "Build the project" },
+    { type: "act", cwdOkay: true, name: "bundle", function: bundle.bundle, description: "Bundle the project" },
 
     // User config
     // { type: "flag", name: "s", description: "Disable verbose logging", function: () => { log.verbose = false; } },
@@ -83,21 +82,26 @@ export function parse(args) {
 
     for (let argument of args) {
         for (let command of COMMANDS) {
-            if (argument === command.name) {
-                action = command.function;
-                args.shift();
+            if (argument !== command.name) continue;
 
-                if (command.type === "act") {
-                    if (args.length === 0) {
-                        log.error("No path provided for: " + command.name);
-                        return null;
-                    }
+            action = command.function;
+            args.shift();
 
-                    projectPath = args[0];
+            if (command.type !== "act") break;
+
+            if (args.length === 0) {
+                if (!command.cwdOkay) {
+                    log.error("No path provided for: " + command.name);
+                    return null;
                 }
 
-                break;
+                // Ducktape don't mind me
+                args.push(".");
             }
+
+            projectPath = args[0];
+
+            break;
         }
     }
 
@@ -159,8 +163,10 @@ export function project(path) {
         return;
     }
 
-    if (fs.existsSync(path[0])) {
-        if (fs.readdirSync(path[0]).length > 0) {
+    const projectDirectory = path[0];
+
+    if (fs.existsSync(projectDirectory)) {
+        if (fs.readdirSync(projectDirectory).length > 0) {
             log.error("The directory is not empty");
         } else {
             log.error("The directory already exists");
@@ -169,9 +175,9 @@ export function project(path) {
         return;
     }
 
-    log.print("Creating a new project at " + path[0], log.GREEN);
+    log.print("Creating a new project at " + projectDirectory, log.GREEN);
 
-    fs.mkdirSync(path[0], { recursive: true });
+    fs.mkdirSync(projectDirectory, { recursive: true });
 
     for (let item of PROJECT_STRUCTURE) {
 
@@ -186,7 +192,6 @@ export function project(path) {
 
     }
 
-    const projectDirectory = path[0];
 
     log.print("Running 'bun i' in the project directory: " + projectDirectory, log.GREEN);
     log.flush();

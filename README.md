@@ -15,6 +15,7 @@ this is embarrassingly drafty/experimental
 - Binary static asset bundler
 - Math stuff (WIP)
 - Audio (WIP)
+- Blazingly fast logging™
 
 ## Commands
 - `help `             Show this help message

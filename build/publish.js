@@ -1,8 +1,9 @@
-import { COMMANDS, COMMAND_SPACING } from "./settings.js";
-import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
 import process from "process";
+
+import * as log from "./log.js";
+import { COMMANDS, COMMAND_SPACING } from "./settings.js";
 
 const CONFIG_PATH = path.join(process.cwd(), "package.json");
 const CONFIG = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));

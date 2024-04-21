@@ -1,11 +1,10 @@
+import * as fs from "fs";
+import * as path from "path";
+
 import * as log from "./log.js";
 import * as settings from "./settings.js";
 import * as user from "./user.js";
 import * as watch from "./watch.js";
-
-import * as fs from "fs";
-import * as path from "path";
-import { execSync } from "child_process";
 
 export const BUNDLE_ROOT = "bundle.js";
 export var minify = true;
@@ -124,10 +123,8 @@ export async function bunBundle() {
         target: 'browser'
     });
 
-    if (!res.success) {
-        console.log(res.logs);
-        return res.logs;
-    }
+    if (res.success) return;
 
-    return null;
+    console.log(res.logs);
+    return res.logs;
 }

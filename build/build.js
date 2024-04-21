@@ -1,8 +1,8 @@
-import * as settings from "./settings.js";
-import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
-import process from "process";
+
+import * as settings from "./settings.js";
+import * as log from "./log.js";
 
 const LOADER_IMPL = `
 export const audioContext = new AudioContext();

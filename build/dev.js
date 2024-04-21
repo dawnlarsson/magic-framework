@@ -1,6 +1,6 @@
-
-// This script is injected in the client side to provide a live connection with the development server
-// find this source in the build/dev.js file on node-modules/magic-framework/build/dev.js
+// This script is inserted in the client side to provide a live connection with the development server
+// find this source in node-modules/magic-framework/build/dev.js
+//
 // Variables --------------------------------------------------------------------
 var ws;
 var lostConnection = false;
@@ -164,8 +164,6 @@ function update() {
 
 
     }).join('');
-
-    report("Test error message")
 
     if (ws.readyState === 1) {
         if (reportBuffer.length > 0) {

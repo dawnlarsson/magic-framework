@@ -1,12 +1,12 @@
-import * as settings from "./settings.js";
-import * as log from "./log.js";
 import * as fs from "fs";
 import * as path from "path";
-import * as build from "./build.js";
-import * as bundle from "./bundle.js";
-
 import process from "process";
 import WebSocket from "ws";
+
+import * as settings from "./settings.js";
+import * as log from "./log.js";
+import * as build from "./build.js";
+import * as bundle from "./bundle.js";
 
 // Only used for local development on magic itself
 const DEV_MODE = true;

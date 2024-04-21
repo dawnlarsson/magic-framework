@@ -1,8 +1,8 @@
 import fs from "fs";
 import process from "process";
-import * as log from "./log.js";
+// import { execSync } from "child_process";
 
-import { execSync } from "child_process";
+import * as log from "./log.js";
 
 // Default blender install path
 var blenderPath = {
