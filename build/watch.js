@@ -108,6 +108,8 @@ function watchServer() {
     }
 
     server = Bun.serve({
+        hostname: "127.0.0.1",
+        port: settings.config.port,
         fetch(req, server) {
             if (server.upgrade(req)) {
                 return;
@@ -120,30 +122,23 @@ function watchServer() {
                 ws.subscribe("reload");
             },
 
-            message(message) {
-
-            },
+            message(message) { },
 
             close(ws, code, message) {
                 ws.unsubscribe("reload");
             }
         }, // handlers
     });
-
-    console.log(`Listening on ${server.hostname}:${server.port}`);
 }
 
 export function reportError(error) {
-    if (error === true || error === undefined) { return; }
     if (server) {
-        ws.clients.forEach((client) => {
-            client.send(JSON.stringify({ error: error }));
-        });
+        server.publish("error", { message: error });
     }
 }
 
 export function reload() {
     if (server) {
-        server.publish("reload", { message: "reload" });
+        server.publish("reload", "reload");
     }
 }
