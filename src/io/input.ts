@@ -1,4 +1,6 @@
 var gamepads = navigator.getGamepads();
+export const AXIS_DEADZONE = 0.6
+export const THRESHOLD = 0.5
 
 // TODO: cover more input types
 // TODO: explore changing the map to a Float32Array and generate a key module
@@ -8,22 +10,38 @@ export var map = {
     mouseXDiff: 0.0,
     mouseYDiff: 0.0,
     forward: 0.0,
-    backward: 0.0,
     left: 0.0,
-    right: 0.0,
-    shift: false,
-    primary: false,
-    primaryDown: false,
-    primaryUp: false,
-    secondary: false,
-    secondaryDown: false,
-    secondaryUp: false
+    shift: 0.0,
+    primary: 0.0,
+    secondary: 0.0,
 }
 
 export function reset() {
     for (let key in map) {
         map[key] = 0.0
     }
+}
+
+export function button(val, impulse = 0.0) {
+    if (impulse != 0.0) return 1.0
+    if (val <= THRESHOLD) return -1.0
+    return 0.0
+}
+
+export function axis(val) {
+    if (val > AXIS_DEADZONE) return 1.0
+    if (val < -AXIS_DEADZONE) return -1.0
+    return 0.0
+}
+
+export function down(key) {
+    if (map[key] >= THRESHOLD) return true
+    return false
+}
+
+export function up(key) {
+    if (map[key] <= -THRESHOLD) return true
+    return false
 }
 
 // updates a primary directional key
@@ -47,7 +65,7 @@ function set(e, val) {
             map.right = val
             break
         case 'ShiftLeft':
-            map.shift = false
+            map.shift = button(map.shift, val)
             break
     }
 }
@@ -56,28 +74,16 @@ export function update() {
     gamepads.forEach((gamepad) => {
         if (!gamepad) return
 
-        map.primary = map.primary || (gamepad.buttons[0] || gamepad.buttons[7])
-        map.secondary = map.secondary || (gamepad.buttons[1] || gamepad.buttons[6])
-
-        if (gamepad.axes[0] > 0.6) {
-            map.right = gamepad.axes[0]
-        } else {
-            map.right = 0.0
-        }
-
-        if (gamepad.axes[0] < -0.6) {
-            map.left = gamepad.axes[0]
-        } else {
-            map.left = 0.0
-        }
+        map.primary = button(map.primary, gamepad.buttons[0].value + gamepad.buttons[7].value)
+        map.secondary = button(map.secondary, gamepad.buttons[1].value + gamepad.buttons[6].value)
+        map.left = axis(gamepad.axes[0])
+        map.forward = axis(gamepad.axes[1])
     });
 }
 
 export function lateUpdate() {
-    map.primary = false
-    map.secondary = false
-    map.primaryUp = false
-    map.secondaryUp = false
+    map.primary = 0.0
+    map.secondary = 0.0
     map.mouseXDiff = 0.0
     map.mouseYDiff = 0.0
 }
@@ -123,60 +129,21 @@ export function setup() {
         set(e, 0.0)
     })
 
-    var lastMouseX: number = 0
-    var lastMouseY: number = 0
-    window.addEventListener('mousemove', (e) => {
-        map.mouseX = e.movementX
-        map.mouseY = e.movementY
-
-        map.mouseXDiff = map.mouseX - lastMouseX
-        map.mouseYDiff = map.mouseY - lastMouseY
-
-        lastMouseX = e.movementX
-        lastMouseY = e.movementY
-    })
-
-    window.addEventListener('touchstart', (e) => {
-    })
-
-    window.addEventListener('touchend', (e) => {
-        reset()
-    })
-
-    var lastTouchX: number = 0
-    var lastTouchY: number = 0
-    window.addEventListener('touchmove', (e) => {
-        map.mouseX = e.touches[0].clientX
-        map.mouseY = e.touches[0].clientY
-
-        map.mouseXDiff = map.mouseX - lastTouchX
-        map.mouseYDiff = map.mouseY - lastTouchY
-
-        lastTouchX = map.mouseX
-        lastTouchY = map.mouseY
-    })
-
     window.addEventListener('mousedown', (e) => {
         if (e.button == 0) {
-            map.primary = true
-            map.primaryDown = true
+            map.primary = button(map.primary, 1.0)
         }
         if (e.button == 2) {
-            map.secondary = true
-            map.secondaryDown = true
+            map.secondary = button(map.secondary, 1.0)
         }
-    }
-    )
+    })
 
     window.addEventListener('mouseup', (e) => {
         if (e.button == 0) {
-            if (map.primaryDown) map.primaryUp = true
-            map.primaryDown = false
+            map.primary = button(map.primary, 0.0)
         }
         if (e.button == 2) {
-            if (map.secondaryDown) map.secondaryUp = true
-            map.secondaryDown = false
+            map.secondary = button(map.secondary, 0.0)
         }
-    }
-    )
+    })
 }
