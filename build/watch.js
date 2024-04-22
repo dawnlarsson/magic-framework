@@ -15,8 +15,8 @@ var watchers = [];
 var watchInterval;
 var active = false;
 
-var ws;
-var args;
+var args
+var server
 
 export function watch(cliArgs) {
 
@@ -103,34 +103,39 @@ function applyChange(buildAssets = true, orgin = "not_set") {
 }
 
 function watchServer() {
-    if (ws) {
+    if (server) {
         return;
     }
 
-    // TODO: Ideally we want wss
-    ws = new WebSocket("ws://127.0.0.1:" + settings.config.port);
+    server = Bun.serve({
+        fetch(req, server) {
+            if (server.upgrade(req)) {
+                return;
+            }
+            return new Response("WS failed upgrade", { status: 500 });
+        },
+        websocket: {
+            open(ws) {
+                ws.send(JSON.stringify({ message: "connected" }));
+                ws.subscribe("reload");
+            },
 
-    ws.onmessage = (message) => {
+            message(message) {
 
-        log.print("___ Report: " + message.data, log.YELLOW);
-        log.flush();
+            },
 
-    };
-
-    ws.on("connection", (socket) => {
-        log.flush();
+            close(ws, code, message) {
+                ws.unsubscribe("reload");
+            }
+        }, // handlers
     });
 
-    ws.on("close", () => { });
-
-    ws.on("error", (error) => { console.log(error); });
-
-    return ws;
+    console.log(`Listening on ${server.hostname}:${server.port}`);
 }
 
 export function reportError(error) {
     if (error === true || error === undefined) { return; }
-    if (ws) {
+    if (server) {
         ws.clients.forEach((client) => {
             client.send(JSON.stringify({ error: error }));
         });
@@ -138,18 +143,7 @@ export function reportError(error) {
 }
 
 export function reload() {
-
-    // The delay here is necessary to ensure that the server has time reload before the client
-    // TODO: propper fix, No time out :3
-    setTimeout(() => {
-        if (ws) {
-
-            if (ws.readyState !== 1) { return; }
-            if (ws.clients.size === 0) { return; }
-
-            ws.clients.forEach((client) => {
-                client.send("reload");
-            });
-        }
-    }, 50);
+    if (server) {
+        server.publish("reload", { message: "reload" });
+    }
 }

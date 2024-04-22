@@ -129,7 +129,7 @@ export function setup() {
         set(e, 0.0)
     })
 
-    window.addEventListener('mousedown', (e) => {
+    window.addEventListener('pointerdown', (e) => {
         if (e.button == 0) {
             map.primary = button(map.primary, 1.0)
         }
@@ -138,7 +138,7 @@ export function setup() {
         }
     })
 
-    window.addEventListener('mouseup', (e) => {
+    window.addEventListener('pointerup', (e) => {
         if (e.button == 0) {
             map.primary = button(map.primary, 0.0)
         }

@@ -130,7 +130,7 @@ export async function build() {
     const finalBlob = Buffer.concat(blobContents);
     const assetPath = path.join(settings.projectPath, settings.config.src, 'assets.js');
     fs.writeFileSync(assetPath, content + "};\n" + LOADER_IMPL);
-    log.print(totalAssets + " offsets: " + assetPath);
+    log.print(totalAssets + " offsets: " + assetPath, log.CYAN);
 
     const binaryPath = path.join(settings.projectPath, settings.config.dist, "assets.bin");
 
@@ -138,14 +138,16 @@ export async function build() {
     const filesize_mb = finalBlob.length / 1024 / 1024;
     const filesize_rounded = Math.round(filesize_mb * 100) / 100;
 
-    log.print(filesize_rounded + "mb (" + finalBlob.length + " kb): " + binaryPath);
+    log.print(filesize_rounded + "mb (" + finalBlob.length + " kb): " + binaryPath, log.CYAN);
 
     fs.writeFileSync(binaryPath, finalBlob);
+
+    log.write(log.YELLOW);
 
     for (let i = 0; i < assetTypes.length; i++) {
         log.write(ASSET_TYPE_EMOJI[i] + " " + assetTypes[i] + " " + settings.ASSET_TYPES[i] + " ");
     }
-    log.write("\n");
+    log.write(log.RESET + "\n");
 
     console.timeEnd("asset bundle");
 }
