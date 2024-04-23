@@ -9,17 +9,23 @@ export const audioContext = new AudioContext();
 export gain = audioContext.createGain();
 gain.connect(audioContext.destination);
 
+var global_volume = 1;
+
 window.magic_setVolume = setVolume;
 export function setVolume(volume) {
-    gain.gain.value = volume;
+    global_volume = volume;
 }
 
 window.magic_play = play;
 
-export function play(sound, volume) {
+export function play(sound, volume = 1, pitch = 1) {
     var source = audioContext.createBufferSource();
     source.buffer = asset[sound].audio;
     source.connect(audioContext.destination);
+
+    gain.gain.value = volume * global_volume;
+    source.playbackRate.value = pitch;
+
     source.connect(gain);
     source.start();
 }
