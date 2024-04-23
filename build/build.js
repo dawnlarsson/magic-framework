@@ -6,7 +6,7 @@ import * as log from "./log.js";
 
 const LOADER_IMPL = `
 export const audioContext = new AudioContext();
-export gain = audioContext.createGain();
+export const gain = audioContext.createGain();
 gain.connect(audioContext.destination);
 
 var global_volume = 1;
@@ -14,6 +14,7 @@ var global_volume = 1;
 window.magic_setVolume = setVolume;
 export function setVolume(volume) {
     global_volume = volume;
+    gain.gain.value = volume;
 }
 
 window.magic_play = play;

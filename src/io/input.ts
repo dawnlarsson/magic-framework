@@ -125,20 +125,32 @@ export function setup() {
 
     window.addEventListener('pointerdown', (e) => {
         if (e.button == 0) {
-            map.primary = button(map.primary, 1.0)
+            map.primary = 1
         }
         if (e.button == 2) {
-            map.secondary = button(map.secondary, 1.0)
+            map.secondary = 1
         }
     })
 
+    // TODO: debug, this causes a hang on input
     window.addEventListener('pointerup', (e) => {
-        if (e.button == 0) {
-            map.primary = button(map.primary, 0.0)
-        }
-        if (e.button == 2) {
-            map.secondary = button(map.secondary, 0.0)
-        }
+        map.primary = 0
+        map.secondary = 0
+    })
+
+    window.addEventListener("pointercancel", (e) => {
+        map.primary = 0
+        map.secondary = 0
+    })
+
+    window.addEventListener("pointerleave", (e) => {
+        map.primary = 0
+        map.secondary = 0
+    })
+
+    // Pointer
+    window.addEventListener('pointerlockchange', (e) => {
+        reset()
     })
 
     // Movment using pointer events
