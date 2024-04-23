@@ -1,6 +1,6 @@
 {
   "name": "magic-framework",
-  "version": "0.1.40",
+  "version": "0.1.50",
   "description": "Game dev framework",
   "main": "index.ts",
   "scripts": {

@@ -17,15 +17,6 @@ this is embarrassingly drafty/experimental
 - Audio (WIP)
 - Blazingly fast logging™
 
-## Commands
-- `help `             Show this help message
-- `version `          Show the version number and exit
-- `new <path>`        Create a new project at the path
-- `dev <path>`        Start development mode
-- `build <path>`      Build the project
-- `setup <path>`      Setup a config file in the current directory
-- `bundle <path>`     Bundle the project
-
 ## TODOs:
 - Build step version if stateInstancer
 - Audio: volume, pitch
