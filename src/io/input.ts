@@ -50,19 +50,19 @@ function set(e, val) {
     switch (e.code) {
         case 'ArrowUp':
         case 'KeyW':
-            map.forward = val
+            map.forward = button(map.forward, val)
             break
         case 'ArrowDown':
         case 'KeyS':
-            map.backward = val
+            map.forward = button(map.forward, -val)
             break
         case 'ArrowLeft':
         case 'KeyA':
-            map.left = val
+            map.left = button(map.left, val)
             break
         case 'ArrowRight':
         case 'KeyD':
-            map.right = val
+            map.left = button(map.left, -val)
             break
         case 'ShiftLeft':
             map.shift = button(map.shift, val)

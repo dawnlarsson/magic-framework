@@ -6,6 +6,7 @@ var ws;
 var lostConnection = false;
 var logs = [];
 var reportBuffer = [];
+var devShutdown = true;
 
 // Constants definitions --------------------------------------------------------
 const local = window.location;
@@ -104,6 +105,11 @@ function watch() {
         if (message.data === 'reload') {
             window.location.reload();
         }
+
+        if (message.data === 'shutdown') {
+            devShutdown = true;
+            lostConnection = true;
+        }
     };
 
     ws.onclose = () => {
@@ -120,6 +126,7 @@ function watch() {
 
     ws.onopen = () => {
         lostConnection = false;
+        devShutdown = false;
         update();
     };
 }

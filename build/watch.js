@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import process from "process";
-import WebSocket from "ws";
 
 import * as settings from "./settings.js";
 import * as log from "./log.js";
@@ -120,12 +119,18 @@ function watchServer() {
             open(ws) {
                 ws.send(JSON.stringify({ message: "connected" }));
                 ws.subscribe("reload");
+                ws.subscribe("error");
+                ws.subscribe("shutdown");
             },
 
-            message(message) { },
+            message(message) {
+                console.log(message);
+            },
 
             close(ws, code, message) {
                 ws.unsubscribe("reload");
+                ws.unsubscribe("error");
+                ws.unsubscribe("shutdown");
             }
         }, // handlers
     });
@@ -133,7 +138,7 @@ function watchServer() {
 
 export function reportError(error) {
     if (server) {
-        server.publish("error", { message: error });
+        server.publish("error", error);
     }
 }
 
@@ -142,3 +147,9 @@ export function reload() {
         server.publish("reload", "reload");
     }
 }
+
+process.on("exit", () => {
+    if (server) {
+        server.publish("shutdown", "shutdown");
+    }
+});
