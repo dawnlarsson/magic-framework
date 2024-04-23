@@ -6,8 +6,6 @@ export const THRESHOLD = 0.5
 export var map = {
     mouseX: 0.0,
     mouseY: 0.0,
-    mouseXDiff: 0.0,
-    mouseYDiff: 0.0,
     forward: 0.0,
     left: 0.0,
     shift: 0.0,
@@ -81,10 +79,8 @@ export function update() {
 }
 
 export function lateUpdate() {
-    map.primary = 0.0
-    map.secondary = 0.0
-    map.mouseXDiff = 0.0
-    map.mouseYDiff = 0.0
+    map.mouseX = 0.0
+    map.mouseY = 0.0
 }
 
 export function vibrate(strength = 1, duration = 100) {
@@ -145,7 +141,7 @@ export function setup() {
 
     // Movment using pointer events
     window.addEventListener('pointermove', (e) => {
-        map.mouseXDiff = e.movementX
-        map.mouseYDiff = e.movementY
+        map.mouseX = e.movementX
+        map.mouseY = e.movementY
     })
 }
