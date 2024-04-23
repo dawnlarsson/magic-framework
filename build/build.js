@@ -6,13 +6,21 @@ import * as log from "./log.js";
 
 const LOADER_IMPL = `
 export const audioContext = new AudioContext();
+export gain = audioContext.createGain();
+gain.connect(audioContext.destination);
+
+window.magic_setVolume = setVolume;
+export function setVolume(volume) {
+    gain.gain.value = volume;
+}
 
 window.magic_play = play;
 
-export function play(sound) {
+export function play(sound, volume) {
     var source = audioContext.createBufferSource();
     source.buffer = asset[sound].audio;
     source.connect(audioContext.destination);
+    source.connect(gain);
     source.start();
 }
 
