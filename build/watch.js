@@ -144,7 +144,9 @@ export function reportError(error) {
 
 export function reload() {
     if (server) {
-        server.publish("reload", "reload");
+        setTimeout(() => {
+            server.publish("reload", "reload");
+        }, 60);
     }
 }
 

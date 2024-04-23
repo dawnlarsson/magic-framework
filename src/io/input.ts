@@ -1,4 +1,3 @@
-var gamepads = navigator.getGamepads();
 export const AXIS_DEADZONE = 0.6
 export const THRESHOLD = 0.5
 
@@ -23,14 +22,14 @@ export function reset() {
 }
 
 export function button(val, impulse = 0.0) {
-    if (impulse != 0.0) return 1.0
+    if (impulse != 0.0) return impulse
     if (val <= THRESHOLD) return -1.0
     return 0.0
 }
 
 export function axis(val) {
-    if (val > AXIS_DEADZONE) return 1.0
-    if (val < -AXIS_DEADZONE) return -1.0
+    if (val > AXIS_DEADZONE) return -1.0
+    if (val < -AXIS_DEADZONE) return 1.0
     return 0.0
 }
 
@@ -50,19 +49,19 @@ function set(e, val) {
     switch (e.code) {
         case 'ArrowUp':
         case 'KeyW':
-            map.forward = button(map.forward, val)
+            map.forward = val
             break
         case 'ArrowDown':
         case 'KeyS':
-            map.forward = button(map.forward, -val)
+            map.forward = val
             break
         case 'ArrowLeft':
         case 'KeyA':
-            map.left = button(map.left, val)
+            map.left = val
             break
         case 'ArrowRight':
         case 'KeyD':
-            map.left = button(map.left, -val)
+            map.left = -val
             break
         case 'ShiftLeft':
             map.shift = button(map.shift, val)
@@ -71,7 +70,7 @@ function set(e, val) {
 }
 
 export function update() {
-    gamepads.forEach((gamepad) => {
+    navigator.getGamepads().forEach((gamepad) => {
         if (!gamepad) return
 
         map.primary = button(map.primary, gamepad.buttons[0].value + gamepad.buttons[7].value)
@@ -89,7 +88,7 @@ export function lateUpdate() {
 }
 
 export function vibrate(strength = 1, duration = 100) {
-    gamepads.forEach((gamepad) => {
+    navigator.getGamepads().forEach((gamepad) => {
         if (!gamepad) return
 
         gamepad.vibrationActuator.playEffect('dual-rumble', {
@@ -105,9 +104,6 @@ export function setup() {
     window.addEventListener('contextmenu', (e) => {
         e.preventDefault()
     })
-
-    window.addEventListener('gamepadconnected', (e) => { gamepads = navigator.getGamepads() })
-    window.addEventListener('gamepaddisconnected', (e) => { gamepads = navigator.getGamepads() })
 
     window.addEventListener('blur', (e) => {
         reset()
@@ -145,5 +141,11 @@ export function setup() {
         if (e.button == 2) {
             map.secondary = button(map.secondary, 0.0)
         }
+    })
+
+    // Movment using pointer events
+    window.addEventListener('pointermove', (e) => {
+        map.mouseXDiff = e.movementX
+        map.mouseYDiff = e.movementY
     })
 }

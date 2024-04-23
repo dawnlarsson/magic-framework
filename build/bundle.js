@@ -98,7 +98,6 @@ export function generateBundleRoot() {
 export async function bunBundle() {
     const entry = path.join(process.cwd(), settings.projectPath, settings.MAGIC_DIR, BUNDLE_ROOT);
     const out = path.join(process.cwd(), settings.projectPath, settings.config.dist);
-    console.time("bun bundle" + entry + " -> " + out);
 
     const res = await Bun.build({
         entrypoints: [entry],
