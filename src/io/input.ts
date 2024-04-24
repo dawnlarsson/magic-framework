@@ -84,7 +84,10 @@ export function lateUpdate() {
 }
 
 export function vibrate(strength = 1, duration = 100) {
-    if (window.magic_hook_vibrate) return window.magic_hook_vibrate(strength, duration)
+    if (window.magic_hook_vibrate) {
+        window.magic_hook_vibrate(strength, duration)
+        return;
+    }
 
     navigator.getGamepads().forEach((gamepad) => {
         if (!gamepad) return

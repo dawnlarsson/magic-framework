@@ -66,7 +66,6 @@ export function watch(cliArgs) {
             }
 
             log.print("Source changed: " + filename, log.YELLOW);
-            console.trace();
 
             applyChange(false, "watch_src");
         }));
