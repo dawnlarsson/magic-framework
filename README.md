@@ -5,7 +5,7 @@
 
 this is embarrassingly drafty/experimental
 
-## Allegedly current roster
+## Current roster
 - CLI & Project creation
 - CLI <--> Client debug bridge, connection status overlay
 - Assets & Project hot-reloading
