@@ -1,12 +1,14 @@
 <div align="center">
-  <img src=".assets/mf_logo.svg" alt="Magic Framework Logo">
+  <img src="./assets/mf_logo.svg" alt="Magic Framework Logo">
+</div>
+<div align="center">
+  <br>
   <a href="https://www.npmjs.com/package/magic-framework">
     <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
   </a>
+  <br><br>
+  Bun runtime is currently only supported.
 </div>
-
-
-Bun runtime is currently only supported.
 
 ## Features
 ### Core Functionality
