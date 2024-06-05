@@ -1,9 +1,11 @@
+<br>
 <div>
-  <img align="left" src="./assets/mf_logo.svg" height="48px" alt="Magic Framework Logo">
+  <img align="left" src="./assets/mf_logo.svg" height="48px" alt="Magic Framework Logo" hspace="24">
     <a href="https://www.npmjs.com/package/magic-framework">
       <img align="right" src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
     </a>
 </div>
+<br>
 <br><br><br>
 <div align=center>
   <br>
