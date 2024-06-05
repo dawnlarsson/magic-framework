@@ -3,3 +3,5 @@
 .magic
 node_modules
 *.lockb
+*.bin
+examples/**/dist

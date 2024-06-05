@@ -1,9 +1,10 @@
 {
-  "name": "magic-carpet",
+  "name": "magic-project",
   "version": "0.0.1",
   "scripts": {
     "dev": "magic dev",
-    "build": "magic build"
+    "build": "magic build",
+    "magic": "bun --bun magic-framework"
   },
   "dependencies": {
     "magic-framework": "^0.1.50"
