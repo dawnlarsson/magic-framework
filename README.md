@@ -1,16 +1,12 @@
-<div align="center">
-  <img src="./assets/mf_logo.svg" alt="Magic Framework Logo">
-</div>
-<div align="center">
-  <br>
-  <a href="https://www.npmjs.com/package/magic-framework">
-    <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
-  </a>
-  <br><br>
-  Bun runtime is currently only supported.
-</div>
+<img src="./assets/mf_logo.svg" height="48px" alt="Magic Framework Logo">
+<hr>
+<a href="https://www.npmjs.com/package/magic-framework">
+  <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
+</a>
+<br><br>
+Bun runtime is currently only supported.
 
-## Features
+## 🔮 Features
 ### Core Functionality
 - CLI & Project creation
 - CLI <--> Client debug bridge, connection status overlay
@@ -27,7 +23,7 @@
 - Audio capabilities
 - Blazingly fast logging™
 
-## TODOs
+## ⚗️ TODOs
 ### Build and Asset Management
 - Build step version of stateInstancer
 - MOF: Magic 3D Object Format
@@ -50,7 +46,7 @@
 - Chunked hot reload (no full rebuild)
 - WebGPU & WebGL integration
 
-# License
+# 🪄 License
 Magic Framework is licensed under MIT.
 
 Logos and visual assets are created and copyright held by Alve Larsson, 2024.
