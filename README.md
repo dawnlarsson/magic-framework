@@ -1,10 +1,17 @@
-<img src="./assets/mf_logo.svg" height="48px" alt="Magic Framework Logo">
-<hr>
-<a href="https://www.npmjs.com/package/magic-framework">
-  <img src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
-</a>
-<br><br>
-Bun runtime is currently only supported.
+<div>
+  <img align="left" src="./assets/mf_logo.svg" height="48px" alt="Magic Framework Logo">
+    <a href="https://www.npmjs.com/package/magic-framework">
+      <img align="right" src="https://img.shields.io/npm/v/magic-framework.svg" alt="npm version">
+    </a>
+</div>
+<br><br><br>
+<div align=center>
+  <br>
+  
+  ```npx magic-framework new <folder-name>```
+  <br><br>
+  Bun runtime is currently only supported.
+</div>
 
 ## 🔮 Features
 ### Core Functionality
