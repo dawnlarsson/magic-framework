@@ -22,7 +22,8 @@ export const COMMAND_SPACING = 20;
 
 export const DEFAULT_PORT = 2370;
 
-const NEW_CFG = { name: "your-project", version: "0.1.0", scripts: { dev: "magic dev", build: "magic build" }, dependencies: { "magic-framework": "^0.1.0" } };
+const NEW_CFG = { name: "your-project", version: "0.0.1", scripts: { dev: "magic dev", build: "magic build" }, dependencies: { "magic-framework": "^" + VERSION } };
+const NEW_README = "# Magic project\nBun is currently only supported, run `bun i` to init the project.\nThen use `magic dev` to start the development server." 
 
 export var config = {
     dist: "dist",
@@ -62,6 +63,7 @@ const PROJECT_STRUCTURE = [
     { type: "dir", name: config.assets },
     ...genAssetSubDirs(),
     { type: "dir", name: MAGIC_DIR },
+    { type: "file", name: "README.md", content: NEW_README, optional: true },
     { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },
     { type: "file", name: ".gitignore", content: MAGIC_DIR },
     { type: "file", name: "package.json", content: JSON.stringify(NEW_CFG, null, 2) },

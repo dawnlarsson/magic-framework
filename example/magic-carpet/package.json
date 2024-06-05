@@ -1,0 +1,11 @@
+{
+  "name": "magic-carpet",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "magic dev",
+    "build": "magic build"
+  },
+  "dependencies": {
+    "magic-framework": "^0.1.50"
+  }
+}
