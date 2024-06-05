@@ -65,7 +65,7 @@ const PROJECT_STRUCTURE = [
     { type: "dir", name: MAGIC_DIR },
     { type: "file", name: "README.md", content: NEW_README, optional: true },
     { type: "file", name: CONFIG_PATH, content: dumpConfig(config) },
-    { type: "file", name: ".gitignore", content: MAGIC_DIR },
+    { type: "file", name: ".gitignore", content: MAGIC_DIR + "\nnode_modules\n*.lockb" },
     { type: "file", name: "package.json", content: JSON.stringify(NEW_CFG, null, 2) },
     { type: "file", name: user.CONFIG_PATH, content: dumpConfig(user.config) },
 ];

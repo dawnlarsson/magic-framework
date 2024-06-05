@@ -1,1 +1,3 @@
 .magic
+node_modules
+*.lockb
