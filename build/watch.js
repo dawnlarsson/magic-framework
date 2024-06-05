@@ -8,7 +8,7 @@ import * as build from "./build.js";
 import * as bundle from "./bundle.js";
 
 // Only used for local development on magic itself
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 var watchers = [];
 var watchInterval;
